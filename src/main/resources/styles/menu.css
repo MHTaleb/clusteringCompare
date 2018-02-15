@@ -1,0 +1,15 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.root{
+ -fx-background-color : #40476d;
+}
+.mainFxmlClass {
+ -fx-background-color : #40476d;
+}
+
+.button{
+    -fx-text-fill : #bebbbb;
+    -fx-background-color : #40476d;
+}

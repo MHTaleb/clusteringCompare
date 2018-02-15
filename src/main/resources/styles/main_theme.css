@@ -1,0 +1,11 @@
+*{
+    -fx-primary : #40476d;
+    -fx-secondary : #bebbbb;
+    -fx-primary-text-color : #826754;
+    -fx-secondary-text-color : #ad5d4e;
+    -fx-click-fill-color : #2f243a;
+}
+
+.root{
+    -fx-background-color: -fx-secondary;
+}

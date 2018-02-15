@@ -1,0 +1,26 @@
+.button {
+    -fx-font-weight: bold;
+}
+
+.tab-header-background{
+    -fx-background-color: #40476d;
+}
+.background-kmeans{
+    -fx-background-color: #bebbbb;
+}
+.background-other{
+    -fx-background-color: #bebbbb;
+}
+.tab{
+    -fx-pref-width : 420 ;
+    -fx-pref-height : 52 ;
+    
+}
+
+.jfx-hamburger-icon {
+    -fx-spacing : 7 ;
+    -fx-z-index: 1;
+}
+.jfx-hamburger-icon StackPane{
+    -fx-background-color : #bebbbb;
+}
