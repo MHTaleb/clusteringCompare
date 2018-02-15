@@ -18,8 +18,8 @@ public class ClusterPoint {
     private int nearestIndex;
 
     public ClusterPoint() {
-        this.x = Math.random() * 100;
-        this.y = Math.random() * 100;
+        this.x = Math.random() * 150;
+        this.y = Math.random() * 150;
     }
 
     public int getCurrentCluster() {
@@ -100,7 +100,7 @@ public class ClusterPoint {
         // ratacher ce noeud au cluster le plus proche en specifiant son indice
         this.nearestIndex = nearestLocalIndex;
         this.currentCluster = nearestLocalIndex;
-      //  System.out.println("nearest index "+nearestLocalIndex + this);
+        System.out.println("nearest index "+nearestLocalIndex + this);
     }
 
     /**
@@ -110,17 +110,19 @@ public class ClusterPoint {
      * @param members les membre de ce cluster en cours
      */
     public void updateCenter(List<ClusterPoint> members) {
-        // initialisation du nouveau centre (0.0)
-        this.setX(0);
-        this.setY(0);
-        //nouveau centre est la moyenne des pair x,y de ses membre
-        members.stream().forEach(point -> {
-            this.setX(point.getX() + this.getX()); // la somme des x des membres
-            this.setY(point.getY() + this.getY()); // la somme des y des membres
-        });
-
-        this.setX(this.getX() / members.size()); // moyenne = somme / nbrMembre
-        this.setY(this.getY() / members.size()); // moyenne = somme / nbrMembre
+        
+        double sommeX = 0,sommeY =0;
+        for (ClusterPoint member : members) {
+            sommeX+=member.getX();
+            sommeY+=member.getY();
+        }
+        
+        sommeX/=members.size();
+        sommeY/=members.size();
+        
+        this.setX(sommeX);
+        this.setY(sommeY);
+        
     }
 
     /**

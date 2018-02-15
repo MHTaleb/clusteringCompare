@@ -19,7 +19,7 @@ public class KmeansResolver {
 
     private final List<ClusterPoint> points;
     private final List<ClusterPoint> centroids;
-    private final List<ClusterPoint> previsouCentroids;
+    private List<ClusterPoint> previsouCentroids;
 
     /**
      *
@@ -32,13 +32,14 @@ public class KmeansResolver {
         for (int i = 0; i < numPoints; i++) {
             points.add(new ClusterPoint());
         }
+        System.out.println(points);
         // initialisation de l algorithme
         this.centroids = new ArrayList<>(numClusters);
         this.previsouCentroids = new ArrayList<>(numClusters);
         for (int i = 0; i < numClusters; i++) {
             centroids.add(points.get(i));
         }
-
+        System.out.println(centroids);
         resolve();
 
     }
@@ -51,52 +52,58 @@ public class KmeansResolver {
 
     private void resolve() {
         this.numOfRepeat = 0;
-        int step = ETAPE_RECHERCHE;
+        int step = 0 ;
         boolean resolved = false;
+        
         while (!resolved) {
-         
-                    //affecter chaque point a un cluster
-                    points.stream().forEach(point -> {
-                        point.attachToNearestIndex(centroids);
-                    });
 
-                    //sauvegarder l ancien clustering
-                    previsouCentroids.clear(); // vider l hitorique
-                    centroids.stream().forEach(centroid -> {
-                        previsouCentroids.add(new ClusterPoint(centroid.getX(), centroid.getY())); // creer une sauvegarde
-                    });
+            //affecter chaque point a un cluster
+            points.stream().forEach(point -> {
+                point.attachToNearestIndex(centroids);
+            });
 
-                    //calculer les nouveaux centroids
-                    int centroidIndex = 0;
-                    centroids.forEach(centroid -> {
-                        // filtre qui permet de recuperer que les membres du cluster
-                        Predicate<ClusterPoint> prdct = point -> {
-                            return point.getCurrentCluster() == centroidIndex;
-                        };
-                        // mettre a jour
-                        centroid.updateCenter(points.stream().filter(prdct).collect(Collectors.toList()));
-                    });
-                    step = ETAPE_VALIDATION;
-         
-                    
-                    boolean endOrNot = true;
-                    for (int i = 0; i < centroids.size(); i++) {
-                        endOrNot = endOrNot && centroids.get(i).isTheSameAs(previsouCentroids.get(i));
-                    }
-                    // verifier le resultat de l iteration courante avec la precedente
-                    System.out.println("repet num : "+numOfRepeat);
-                    numOfRepeat++;
-                    if (endOrNot) {
-                        step = FIN;
-                    } else {
-                        step = ETAPE_RECHERCHE;
-                    }
+            //sauvegarder l ancien clustering
+            previsouCentroids = new ArrayList<>();// vider l hitorique
+            for (int i = 0; i < centroids.size(); i++) {
+                ClusterPoint centroid = centroids.get(i);
+                previsouCentroids.add(i,new ClusterPoint(centroid.getX(), centroid.getY())); // creer une sauvegarde
+            }
+            
 
-          
-                    if (step == FIN )resolved = true;
-                    
+            //calculer les nouveaux centroids
+            for (int centroidIndex = 0; centroidIndex < centroids.size(); centroidIndex++) {
+                ClusterPoint centroid = centroids.get(centroidIndex);
+                final int finalCentroidIndex = centroidIndex;
+                Predicate<ClusterPoint> prdct = point -> {
+                    return point.getCurrentCluster() == finalCentroidIndex;
+                };
+                // mettre a jour
+                centroid.updateCenter(points.stream().filter(prdct).collect(Collectors.toList()));
+                
             }
         
+           
+            // verifier le nouveau centre avec l ancien
+            boolean endOrNot = true;
+            for (int i = 0; i < centroids.size(); i++) {
+                endOrNot = endOrNot && centroids.get(i).isTheSameAs(previsouCentroids.get(i));
+            }
+            // verifier le resultat de l iteration courante avec la precedente
+            System.out.println("repet num : " + numOfRepeat);
+            numOfRepeat++;
+            if (endOrNot) {
+                step = FIN;
+            }
+
+            if (numOfRepeat > 100) {
+                resolved = true;
+            }
+            
+            if (step == FIN) {
+                resolved = true;
+            }
+
+        }
 
     }
 
@@ -111,7 +118,7 @@ public class KmeansResolver {
     public List<ClusterPoint> getPrevisouCentroids() {
         return previsouCentroids;
     }
-    
+
     public int getNumOfRepeat() {
         return numOfRepeat;
     }

@@ -19,10 +19,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Side;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class FXMLController implements Initializable {
@@ -37,10 +38,13 @@ public class FXMLController implements Initializable {
     private JFXDrawer drawer;
 
     @FXML
+    private HBox chartBox;
+    
+    @FXML
     private JFXButton launch;
 
-    @FXML
-    private ScatterChart<Number, Number> chart;
+   
+    private ScatterChart<Number,Number> chart;
 
     @FXML
     private JFXHamburger hamburger;
@@ -49,6 +53,7 @@ public class FXMLController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         initializeDrawer();
+        initializeChart();
 
     }
 
@@ -62,14 +67,13 @@ public class FXMLController implements Initializable {
         List<ClusterPoint> points = kmeansResolver.getPoints();
         //preparation du graph
         chart.setTitle("Carte de résolution \n nombre d'itération : "+numOfRepeat);
-        chart.setTitleSide(Side.TOP);
+        
         centroids.stream().forEach(new Consumer<ClusterPoint>() {
             int i = 0;// indice du cluster courant
             @Override
             public void accept(ClusterPoint center) {
                 // creer uen nouvelle serie
-                XYChart.Series<Number,Number> seriesCentre = new XYChart.Series();
-                seriesCentre = new XYChart.Series();
+                XYChart.Series seriesCentre = new XYChart.Series();
                 seriesCentre.setName("Centre cluster "+i);
                 // filtrer que les point membre de ce cluster
                 Predicate<? super ClusterPoint> prdct = point ->{
@@ -78,19 +82,20 @@ public class FXMLController implements Initializable {
                 // ajouter le centre
                 seriesCentre.getData().add(new XYChart.Data<>(center.getX(), center.getY()));
                 
-                final XYChart.Series<Number,Number> seriesMembre = new XYChart.Series();
+                final XYChart.Series seriesMembre = new XYChart.Series();
                 seriesMembre.setName("membre du cluster "+i);
                 // ajouter la population
                 points.stream().filter(prdct).forEach((ClusterPoint point) -> {
-                    seriesMembre.getData().add(new XYChart.Data<>(point.getX(), point.getY()));
-                    System.out.println("point "+point);
+                    seriesMembre.getData().add(new XYChart.Data<>(point.getX()/1, point.getY()/1));
                 });
-                chart.getData().add(seriesCentre);
+                System.out.println(seriesCentre);
+                System.out.println(seriesMembre);
                 chart.getData().add(seriesMembre);
-                i++;
-                System.out.println("graphe itere");
+                chart.getData().add(seriesCentre);
+                i++;    
             }
         });
+        
     }
 
     private void initializeDrawer() {
@@ -123,6 +128,15 @@ public class FXMLController implements Initializable {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    private void initializeChart() {
+        NumberAxis axisX = new NumberAxis("X", 0, 150, 10);
+        NumberAxis axisY = new NumberAxis("Y", 0, 150, 10);
+        chart = new ScatterChart<>(axisX,axisY);
+        chart.autosize();
+        chart.prefWidthProperty().bind(chartBox.widthProperty());
+        chartBox.getChildren().add(chart);
     }
 
 }
