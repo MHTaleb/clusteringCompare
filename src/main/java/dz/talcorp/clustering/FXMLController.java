@@ -67,7 +67,7 @@ public class FXMLController implements Initializable {
         List<ClusterPoint> points = kmeansResolver.getPoints();
         //preparation du graph
         chart.setTitle("Carte de résolution \n nombre d'itération : "+numOfRepeat);
-        
+        chart.getData().clear();
         centroids.stream().forEach(new Consumer<ClusterPoint>() {
             int i = 0;// indice du cluster courant
             @Override
