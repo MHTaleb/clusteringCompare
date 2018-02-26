@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class ClusterPoint {
 
-    private double x, y;
+    private double x, y; // coordonée
     private int currentCluster;
     private int nearestIndex;
 

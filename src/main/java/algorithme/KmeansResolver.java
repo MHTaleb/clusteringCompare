@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
  */
 public class KmeansResolver {
 
-    private final List<ClusterPoint> points;
-    private final List<ClusterPoint> centroids;
+    private final List<ClusterPoint> POINTS;
+    private final List<ClusterPoint> CENTROIDS;
     private List<ClusterPoint> previsouCentroids;
 
     /**
@@ -28,65 +28,62 @@ public class KmeansResolver {
      */
     public KmeansResolver(int numPoints, int numClusters) {
         // creation de la population
-        this.points = new ArrayList<>(numPoints);
+        this.POINTS = new ArrayList<>(numPoints);
         for (int i = 0; i < numPoints; i++) {
-            points.add(new ClusterPoint());
+            POINTS.add(new ClusterPoint());
         }
-        System.out.println(points);
+        System.out.println(POINTS);
         // initialisation de l algorithme
-        this.centroids = new ArrayList<>(numClusters);
+        this.CENTROIDS = new ArrayList<>(numClusters);
         this.previsouCentroids = new ArrayList<>(numClusters);
         for (int i = 0; i < numClusters; i++) {
-            centroids.add(points.get(i));
+            CENTROIDS.add(POINTS.get(i));
         }
-        System.out.println(centroids);
+        System.out.println(CENTROIDS);
         resolve();
 
     }
 
-    private final int ETAPE_RECHERCHE = 0;
-    private final int ETAPE_VALIDATION = 1;
+ 
     private final int FIN = 2;
 
     private int numOfRepeat;
 
     private void resolve() {
         this.numOfRepeat = 0;
-        int step = 0 ;
+        int step = 0;
         boolean resolved = false;
-        
+
         while (!resolved) {
 
             //affecter chaque point a un cluster
-            points.stream().forEach(point -> {
-                point.attachToNearestIndex(centroids);
+            POINTS.stream().forEach(point -> {
+                point.attachToNearestIndex(CENTROIDS);
             });
 
             //sauvegarder l ancien clustering
             previsouCentroids = new ArrayList<>();// vider l hitorique
-            for (int i = 0; i < centroids.size(); i++) {
-                ClusterPoint centroid = centroids.get(i);
-                previsouCentroids.add(i,new ClusterPoint(centroid.getX(), centroid.getY())); // creer une sauvegarde
+            for (int i = 0; i < CENTROIDS.size(); i++) {
+                ClusterPoint centroid = CENTROIDS.get(i);
+                previsouCentroids.add(i, new ClusterPoint(centroid.getX(), centroid.getY())); // creer une sauvegarde
             }
-            
 
             //calculer les nouveaux centroids
-            for (int centroidIndex = 0; centroidIndex < centroids.size(); centroidIndex++) {
-                ClusterPoint centroid = centroids.get(centroidIndex);
+            for (int centroidIndex = 0; centroidIndex < CENTROIDS.size(); centroidIndex++) {
+                ClusterPoint centroid = CENTROIDS.get(centroidIndex);
                 final int finalCentroidIndex = centroidIndex;
                 Predicate<ClusterPoint> prdct = point -> {
                     return point.getCurrentCluster() == finalCentroidIndex;
                 };
                 // mettre a jour
-                centroid.updateCenter(points.stream().filter(prdct).collect(Collectors.toList()));
-                
+                centroid.updateCenter(POINTS.stream().filter(prdct).collect(Collectors.toList()));
+
             }
-        
-           
+
             // verifier le nouveau centre avec l ancien
             boolean endOrNot = true;
-            for (int i = 0; i < centroids.size(); i++) {
-                endOrNot = endOrNot && centroids.get(i).isTheSameAs(previsouCentroids.get(i));
+            for (int i = 0; i < CENTROIDS.size(); i++) {
+                endOrNot = endOrNot && CENTROIDS.get(i).isTheSameAs(previsouCentroids.get(i));
             }
             // verifier le resultat de l iteration courante avec la precedente
             System.out.println("repet num : " + numOfRepeat);
@@ -98,7 +95,7 @@ public class KmeansResolver {
             if (numOfRepeat > 100) {
                 resolved = true;
             }
-            
+
             if (step == FIN) {
                 resolved = true;
             }
@@ -108,11 +105,11 @@ public class KmeansResolver {
     }
 
     public List<ClusterPoint> getCentroids() {
-        return centroids;
+        return CENTROIDS;
     }
 
     public List<ClusterPoint> getPoints() {
-        return points;
+        return POINTS;
     }
 
     public List<ClusterPoint> getPrevisouCentroids() {

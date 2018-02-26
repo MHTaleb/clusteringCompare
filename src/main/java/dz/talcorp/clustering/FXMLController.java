@@ -58,13 +58,15 @@ public class FXMLController implements Initializable {
     }
 
     @FXML
-    void Simule(ActionEvent event) {
+    private void Simule(ActionEvent event) {
         //lancement du simulateur
         KmeansResolver kmeansResolver = new KmeansResolver((int) tailleNoeud.getValue(), (int) tailleCluster.getValue());
+       
         //recuperation du resultat
         List<ClusterPoint> centroids = kmeansResolver.getCentroids();
         int numOfRepeat = kmeansResolver.getNumOfRepeat();
-        List<ClusterPoint> points = kmeansResolver.getPoints();
+        List<ClusterPoint> points = kmeansResolver.getPoints();//pop
+       
         //preparation du graph
         chart.setTitle("Carte de résolution \n nombre d'itération : "+numOfRepeat);
         chart.getData().clear();
@@ -88,8 +90,11 @@ public class FXMLController implements Initializable {
                 points.stream().filter(prdct).forEach((ClusterPoint point) -> {
                     seriesMembre.getData().add(new XYChart.Data<>(point.getX()/1, point.getY()/1));
                 });
+               
+                
                 System.out.println(seriesCentre);
                 System.out.println(seriesMembre);
+                
                 chart.getData().add(seriesMembre);
                 chart.getData().add(seriesCentre);
                 i++;    
