@@ -20,6 +20,11 @@
     </organization>
 
     <dependencies>
+        <dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-csv</artifactId>
+    <version>1.5</version>
+</dependency>
         <!-- 
 <dependency>  
     <groupId>com.tilab.jade</groupId> 

@@ -44,6 +44,16 @@ public class KmeansResolver {
 
     }
 
+    public KmeansResolver(List<ClusterPoint> POINTS,int numClusters) {
+        this.POINTS = POINTS;
+        this.CENTROIDS = new ArrayList<>();
+        for (int i = 0; i < numClusters; i++) {
+            CENTROIDS.add(POINTS.get(i));
+        }
+    }
+    
+    
+
  
     private final int FIN = 2;
 

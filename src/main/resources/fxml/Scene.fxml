@@ -72,9 +72,49 @@
                                  </children></AnchorPane>
                           </content>
                         </Tab>
-                        <Tab text="Untitled Tab">
+                        <Tab text="Diabète">
                           <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <VBox layoutX="6.0" prefHeight="200.0" prefWidth="100.0" spacing="34.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="34.0">
+                                             <padding>
+                                                <Insets left="34.0" right="34.0" />
+                                             </padding>
+                                             <children>
+                                                <JFXTextField fx:id="chemin" editable="false" focusColor="#299e3a" labelFloat="true" prefHeight="25.0" prefWidth="57.0" promptText="Chemin" text="c:/" unFocusColor="#0e9654" HBox.hgrow="ALWAYS" />
+                                                <JFXButton onAction="#openFileChooser" prefHeight="42.0" prefWidth="136.0" ripplerFill="#40476d" styleClass="open_file_icon" text="Ouvrir" />
+                                             </children>
+                                          </HBox>
+                                          <HBox prefHeight="38.0" prefWidth="838.0" spacing="17.0">
+                                             <children>
+                                                <Label text="Nombre de Cluster">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <JFXSlider fx:id="nombreClusterDiabete" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="5" showTickLabels="true" showTickMarks="true" value="1.0" HBox.hgrow="ALWAYS" />
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                             <padding>
+                                                <Insets left="34.0" right="35.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox fx:id="mapDiabete" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                          <HBox alignment="CENTER">
+                                             <children>
+                                                <JFXButton onAction="#LancerSimulation" prefHeight="25.0" prefWidth="136.0" ripplerFill="#40476d" text="Lancer" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="34.0" left="34.0" right="34.0" top="34.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children></AnchorPane>
                           </content>
                         </Tab>
                      </tabs>

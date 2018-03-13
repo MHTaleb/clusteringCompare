@@ -1,12 +1,15 @@
 package dz.talcorp.clustering;
 
 import algorithme.KmeansResolver;
+import builder.CSVPointBuilder;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.controls.JFXSlider;
+import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import entity.ClusterPoint;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -25,6 +28,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 
 public class FXMLController implements Initializable {
 
@@ -32,22 +36,30 @@ public class FXMLController implements Initializable {
     private JFXSlider tailleCluster;
 
     @FXML
+    private HBox chartBox;
+
+    @FXML
     private JFXSlider tailleNoeud;
+
+    @FXML
+    private HBox mapDiabete;
+
+    @FXML
+    private JFXSlider nombreClusterDiabete;
 
     @FXML
     private JFXDrawer drawer;
 
     @FXML
-    private HBox chartBox;
-    
-    @FXML
     private JFXButton launch;
 
-   
-    private ScatterChart<Number,Number> chart;
+    @FXML
+    private JFXTextField chemin;
 
     @FXML
     private JFXHamburger hamburger;
+
+    private ScatterChart<Number, Number> chart;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -61,46 +73,46 @@ public class FXMLController implements Initializable {
     private void Simule(ActionEvent event) {
         //lancement du simulateur
         KmeansResolver kmeansResolver = new KmeansResolver((int) tailleNoeud.getValue(), (int) tailleCluster.getValue());
-       
+
         //recuperation du resultat
         List<ClusterPoint> centroids = kmeansResolver.getCentroids();
         int numOfRepeat = kmeansResolver.getNumOfRepeat();
         List<ClusterPoint> points = kmeansResolver.getPoints();//pop
-       
+
         //preparation du graph
-        chart.setTitle("Carte de résolution \n nombre d'itération : "+numOfRepeat);
+        chart.setTitle("Carte de résolution \n nombre d'itération : " + numOfRepeat);
         chart.getData().clear();
         centroids.stream().forEach(new Consumer<ClusterPoint>() {
             int i = 0;// indice du cluster courant
+
             @Override
             public void accept(ClusterPoint center) {
                 // creer uen nouvelle serie
                 XYChart.Series seriesCentre = new XYChart.Series();
-                seriesCentre.setName("Centre cluster "+i);
+                seriesCentre.setName("Centre cluster " + i);
                 // filtrer que les point membre de ce cluster
-                Predicate<? super ClusterPoint> prdct = point ->{
+                Predicate<? super ClusterPoint> prdct = point -> {
                     return point.getCurrentCluster() == i;
                 };
                 // ajouter le centre
                 seriesCentre.getData().add(new XYChart.Data<>(center.getX(), center.getY()));
-                
+
                 final XYChart.Series seriesMembre = new XYChart.Series();
-                seriesMembre.setName("membre du cluster "+i);
+                seriesMembre.setName("membre du cluster " + i);
                 // ajouter la population
                 points.stream().filter(prdct).forEach((ClusterPoint point) -> {
-                    seriesMembre.getData().add(new XYChart.Data<>(point.getX()/1, point.getY()/1));
+                    seriesMembre.getData().add(new XYChart.Data<>(point.getX() / 1, point.getY() / 1));
                 });
-               
-                
+
                 System.out.println(seriesCentre);
                 System.out.println(seriesMembre);
-                
+
                 chart.getData().add(seriesMembre);
                 chart.getData().add(seriesCentre);
-                i++;    
+                i++;
             }
         });
-        
+
     }
 
     private void initializeDrawer() {
@@ -138,10 +150,32 @@ public class FXMLController implements Initializable {
     private void initializeChart() {
         NumberAxis axisX = new NumberAxis("X", 0, 150, 10);
         NumberAxis axisY = new NumberAxis("Y", 0, 150, 10);
-        chart = new ScatterChart<>(axisX,axisY);
+        chart = new ScatterChart<>(axisX, axisY);
         chart.autosize();
         chart.prefWidthProperty().bind(chartBox.widthProperty());
         chartBox.getChildren().add(chart);
+    }
+    
+    private File selectedFile;
+    
+    private CSVPointBuilder csvpb;
+    
+    @FXML
+    void openFileChooser(ActionEvent event) {
+        FileChooser chooser = new FileChooser();
+        selectedFile = chooser.showOpenDialog(null);
+        chemin.setText(selectedFile.getAbsolutePath());
+        try {
+            csvpb = new CSVPointBuilder(selectedFile.getAbsolutePath(), new int[]{1,1}, new int[]{1,1});
+            
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @FXML
+    void LancerSimulation(ActionEvent event) {
+
     }
 
 }
