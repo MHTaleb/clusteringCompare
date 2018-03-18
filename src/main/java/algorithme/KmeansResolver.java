@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
  */
 public class KmeansResolver {
 
+    private String simulationName;
+    
     private final List<ClusterPoint> POINTS;
     private final List<ClusterPoint> CENTROIDS;
     private List<ClusterPoint> previsouCentroids;
@@ -32,24 +34,34 @@ public class KmeansResolver {
         for (int i = 0; i < numPoints; i++) {
             POINTS.add(new ClusterPoint());
         }
-        System.out.println(POINTS);
+//        System.out.println(POINTS);
         // initialisation de l algorithme
         this.CENTROIDS = new ArrayList<>(numClusters);
         this.previsouCentroids = new ArrayList<>(numClusters);
         for (int i = 0; i < numClusters; i++) {
             CENTROIDS.add(POINTS.get(i));
         }
-        System.out.println(CENTROIDS);
+//        System.out.println(CENTROIDS);
         resolve();
 
     }
 
     public KmeansResolver(List<ClusterPoint> POINTS,int numClusters) {
-        this.POINTS = POINTS;
+        this.POINTS = new ArrayList<>(POINTS);
         this.CENTROIDS = new ArrayList<>();
+        this.previsouCentroids = new ArrayList<>(numClusters);
         for (int i = 0; i < numClusters; i++) {
-            CENTROIDS.add(POINTS.get(i));
+            CENTROIDS.add(this.POINTS.get(i));
         }
+        resolve();
+    }
+
+    public String getSimulationName() {
+        return simulationName;
+    }
+
+    public void setSimulationName(String simulationName) {
+        this.simulationName = simulationName;
     }
     
     
@@ -96,7 +108,7 @@ public class KmeansResolver {
                 endOrNot = endOrNot && CENTROIDS.get(i).isTheSameAs(previsouCentroids.get(i));
             }
             // verifier le resultat de l iteration courante avec la precedente
-            System.out.println("repet num : " + numOfRepeat);
+//            System.out.println("repet num : " + numOfRepeat);
             numOfRepeat++;
             if (endOrNot) {
                 step = FIN;

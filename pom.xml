@@ -25,6 +25,12 @@
     <artifactId>commons-csv</artifactId>
     <version>1.5</version>
 </dependency>
+
+<dependency>
+<groupId>com.github.kerner1000</groupId>
+<artifactId>javafx-chart-zooming</artifactId>
+<version>0.0.8</version>
+</dependency>
         <!-- 
 <dependency>  
     <groupId>com.tilab.jade</groupId> 

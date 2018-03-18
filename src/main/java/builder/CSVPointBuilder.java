@@ -30,8 +30,8 @@ public class CSVPointBuilder {
     private final String FILE_PATH;
     private String[] HEADERS;
     List<ClusteringDataPair> clusteringDataPairs;
-
-    public CSVPointBuilder(String chemin_fichier, int[] poidsX, int[] poidsY) throws IOException {
+    
+    public CSVPointBuilder(String chemin_fichier) throws IOException {
 
         this.FILE_PATH = chemin_fichier;
 
@@ -63,13 +63,13 @@ public class CSVPointBuilder {
             for (CSVRecord csvRecord : csvRecords) {
                 final long index = csvRecord.getRecordNumber();
                 // Accessing values by Header names
-                System.out.println("csvRecord.getRecordNumber()   "+index);
+//                System.out.println("csvRecord.getRecordNumber()   "+index);
                 final Map<String, String> line = csvRecord.toMap();
-                System.out.println("csvRecord.toMap()     "+line);
+//                System.out.println("csvRecord.toMap()     "+line);
                 Set<Map.Entry<String, String>> entrySet = line.entrySet();
                 for (Map.Entry<String, String> entry : entrySet) {
-                    System.out.println(entry.getKey());
-                    System.out.println(entry.getValue());
+//                    System.out.println(entry.getKey());
+//                    System.out.println(entry.getValue());
                     Predicate<? super ClusteringDataPair> prdct = clusterData ->{
                         return clusterData.getColumn().equals(entry.getKey());
                     };
@@ -80,22 +80,22 @@ public class CSVPointBuilder {
                 }
                 
             }
-            System.out.println("");
-            System.out.println("/////////////////////////////////////////////////////////");
-            System.out.println("/////////////////////////////////////////////////////////");
-            System.out.println("/////////////////////////////////////////////////////////");
-            System.out.println("");
-            System.out.println(clusteringDataPairs);
+//            System.out.println("");
+//            System.out.println("/////////////////////////////////////////////////////////");
+//            System.out.println("/////////////////////////////////////////////////////////");
+//            System.out.println("/////////////////////////////////////////////////////////");
+//            System.out.println("");
+//            System.out.println(clusteringDataPairs);
             
             Hashtable<String, List<ClusterPoint>> clusteringDimensions = getClusteringDimensions();
             clusteringDimensions.entrySet().forEach(set->{
-                System.out.println("");
-                System.out.println("/////////////////////////////////////////////////////////");
-                System.out.println("/////////////////////////////////////////////////////////");
-                System.out.println("/////////////////////////////////////////////////////////");
-                System.out.println("");
-                System.out.println("set = "+set.getKey());
-                System.out.println("values = "+set.getValue());
+//                System.out.println("");
+//                System.out.println("/////////////////////////////////////////////////////////");
+//                System.out.println("/////////////////////////////////////////////////////////");
+//                System.out.println("/////////////////////////////////////////////////////////");
+//                System.out.println("");
+//                System.out.println("set = "+set.getKey());
+//                System.out.println("values = "+set.getValue());
             });
     }
 

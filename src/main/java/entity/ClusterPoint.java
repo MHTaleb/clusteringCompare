@@ -100,7 +100,7 @@ public class ClusterPoint {
         // ratacher ce noeud au cluster le plus proche en specifiant son indice
         this.nearestIndex = nearestLocalIndex;
         this.currentCluster = nearestLocalIndex;
-        System.out.println("nearest index "+nearestLocalIndex + this);
+//        System.out.println("nearest index "+nearestLocalIndex + this);
     }
 
     /**
@@ -135,10 +135,10 @@ public class ClusterPoint {
     public boolean isTheSameAs(ClusterPoint comparasonPoint) {
         
         final boolean state = (int)this.getX()*10000 == (int)comparasonPoint.getX()*10000 && (int)this.getY()*10000 == (int)comparasonPoint.getY() *10000;
-        System.out.println("X "+(int)this.getX()*10000 );
-        System.out.println("X1 "+(int)comparasonPoint.getX()*10000 );
-        System.out.println("Y "+(int)this.getY()*10000  );
-        System.out.println("Y1 "+(int)comparasonPoint.getY()*10000 );
+//        System.out.println("X "+(int)this.getX()*10000 );
+//        System.out.println("X1 "+(int)comparasonPoint.getX()*10000 );
+//        System.out.println("Y "+(int)this.getY()*10000  );
+//        System.out.println("Y1 "+(int)comparasonPoint.getY()*10000 );
         return state ;
         
     }

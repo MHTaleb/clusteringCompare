@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.geometry.*?>
@@ -103,10 +104,47 @@
                                                 <Insets left="34.0" right="35.0" />
                                              </padding>
                                           </HBox>
-                                          <HBox fx:id="mapDiabete" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                                          <HBox alignment="CENTER">
+                                          <HBox fx:id="mapDiabete" prefHeight="261.0" prefWidth="838.0" spacing="10.0" VBox.vgrow="ALWAYS">
                                              <children>
-                                                <JFXButton onAction="#LancerSimulation" prefHeight="25.0" prefWidth="136.0" ripplerFill="#40476d" text="Lancer" />
+                                                <VBox fx:id="csvMaps" alignment="CENTER" prefHeight="217.0" prefWidth="515.0" HBox.hgrow="ALWAYS" />
+                                                <VBox alignment="CENTER" prefHeight="217.0" prefWidth="324.0" spacing="2.0" style="-fx-background-color: #303030;" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <TableView fx:id="popTable" prefHeight="222.0" prefWidth="324.0" VBox.vgrow="ALWAYS">
+                                                        <columns>
+                                                          <TableColumn fx:id="clusterColumn" prefWidth="75.0" text="cluster" />
+                                                          <TableColumn fx:id="indvColumn" prefWidth="75.0" text="individu" />
+                                                        </columns>
+                                                         <columnResizePolicy>
+                                                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                         </columnResizePolicy>
+                                                      </TableView>
+                                                      <JFXButton onAction="#lancerAnalyse" prefHeight="25.0" prefWidth="691.0" ripplerFill="#725e5e" text="Lancer Analyse" textFill="#e8e8e8" />
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                                                   </padding>
+                                                   <effect>
+                                                      <DropShadow />
+                                                   </effect>
+                                                </VBox>
+                                             </children></HBox>
+                                          <HBox>
+                                             <children>
+                                                <HBox HBox.hgrow="SOMETIMES">
+                                                   <children>
+                                                      <JFXButton fx:id="previous" ellipsisString="&lt;&lt;" onAction="#showPrevious" text="&lt;&lt;" HBox.hgrow="SOMETIMES" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <JFXButton onAction="#LancerSimulationcsv" prefHeight="25.0" prefWidth="1163.0" ripplerFill="#40476d" text="Lancer" HBox.hgrow="ALWAYS" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox HBox.hgrow="SOMETIMES">
+                                                   <children>
+                                                      <JFXButton fx:id="next" ellipsisString="&gt;&gt;" onAction="#showNext" prefHeight="25.0" prefWidth="40.0" text="&gt;&gt;" HBox.hgrow="SOMETIMES" />
+                                                   </children>
+                                                </HBox>
                                              </children>
                                           </HBox>
                                        </children>
