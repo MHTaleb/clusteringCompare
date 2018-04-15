@@ -49,7 +49,10 @@ public class GameTheoryResolver {
             clusteringResult.getPoints().forEach(onePointRecorder);
         });
 
+        System.out.println("********************/*/*/*/***********************");
         System.out.println(pairResults);
+        System.out.println("********************/*/*/*/***********************");
+        
     }
 
     public class PairResult {

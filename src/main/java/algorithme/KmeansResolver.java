@@ -114,7 +114,7 @@ public class KmeansResolver {
                 step = FIN;
             }
 
-            if (numOfRepeat > 100) {
+            if (numOfRepeat > 1000) {
                 resolved = true;
             }
 

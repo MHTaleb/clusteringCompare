@@ -3,7 +3,7 @@ package dz.talcorp.clustering;
 import algorithme.GameTheoryResolver;
 import algorithme.KmeansResolver;
 import builder.CSVPointBuilder;
-import com.github.javafx.charts.zooming.ZoomManager;
+import builder.ClusteringDataPair;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -49,17 +50,23 @@ public class FXMLController implements Initializable {
 
     @FXML
     private TableView<TableClusterElement> popTable;
+    
+    @FXML
+    private TableColumn<TableClusterElement, String> membreAvant;
 
-    private ObservableList<TableClusterElement> tablePopulationObservableList;
+      @FXML
+    private TableColumn<TableClusterElement, String> taux;
 
     @FXML
-    private TableColumn<TableClusterElement, String> indvColumn;
+    private TableColumn<TableClusterElement, String> classColumn;
 
+    
     @FXML
-    private TableColumn<TableClusterElement, String> clusterColumn;
+    private TableColumn<TableClusterElement, String> membreApres;
 
+    
     @FXML
-    private VBox csvMaps;
+    private HBox csvMaps;
 
     @FXML
     private JFXSlider tailleCluster;
@@ -90,6 +97,8 @@ public class FXMLController implements Initializable {
 
     private ScatterChart<Number, Number> chart;
     private ScatterChart<Number, Number> chartCSV;
+    private ScatterChart<Number, Number> chartCSVBruit;
+    private ObservableList<TableClusterElement> tableStudyResultList;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -194,7 +203,7 @@ public class FXMLController implements Initializable {
 	axisY.setLabel("Y");
 	axisY.setForceZeroInRange(false);
         
-        chart = new ScatterChart<Number, Number>(axisX, axisY);
+        chart = new ScatterChart<>(axisX, axisY);
         chart.autosize();
         chart.prefWidthProperty().bind(chartBox.widthProperty());
         chartBox.getChildren().add(chart);
@@ -205,6 +214,11 @@ public class FXMLController implements Initializable {
         chartCSV.prefWidthProperty().bind(csvMaps.widthProperty());
         chartCSV.prefHeightProperty().bind(csvMaps.heightProperty());
         csvMaps.getChildren().add(chartCSV);
+        chartCSVBruit = new ScatterChart<>(axisX, axisY);
+        chartCSVBruit.autosize();
+        chartCSVBruit.prefWidthProperty().bind(csvMaps.widthProperty());
+        chartCSVBruit.prefHeightProperty().bind(csvMaps.heightProperty());
+        csvMaps.getChildren().add(chartCSVBruit);
         
        
         
@@ -223,116 +237,86 @@ public class FXMLController implements Initializable {
         chemin.setText(selectedFile.getAbsolutePath());
     }
 
-    private int sizeOfElements;
-    private int currentGraphIndex;
 
     @FXML
     void LancerSimulationcsv(ActionEvent event) {
         
+        List<ClusteringDataPair> clusteringDataPairs = null;
         try {
             csvpb = new CSVPointBuilder(selectedFile.getAbsolutePath());
+            clusteringDataPairs = csvpb.getClusteringDataPairs();
+            System.out.println(clusteringDataPairs);
             Hashtable<String, List<ClusterPoint>> clusteringDimensions = csvpb.getClusteringDimensions();
             simulations = new ArrayList<>();
 
             clusteringDimensions.keySet().stream().forEach(key -> {
-                final KmeansResolver kmeansResolver = new KmeansResolver(clusteringDimensions.get(key), (int) nombreClusterDiabete.getValue());
-                //System.out.println("simulation " + key + " is done");
-                kmeansResolver.setSimulationName(key);
-                simulations.add(kmeansResolver);
+                if(!(
+                        key.toLowerCase().trim().startsWith("class ") || 
+                        //key.toLowerCase().trim().startsWith("id") || 
+                        key.toLowerCase().trim().endsWith(" class") || 
+                        key.toLowerCase().trim().endsWith("id") || 
+                        key.toLowerCase().trim().equals("id") )){
+                    final KmeansResolver kmeansResolver = new KmeansResolver(clusteringDimensions.get(key), (int) nombreClusterDiabete.getValue());
+                    System.out.println("simulation " + key + " is done");
+                    kmeansResolver.setSimulationName(key);
+                    simulations.add(kmeansResolver);
+                    
+                }
             });
                 System.out.println("simulation  is done");
-
-            final KmeansResolver kmeansResolver = simulations.get(currentGraphIndex);
-
-            List<ClusterPoint> centroids = kmeansResolver.getCentroids();
-            int numOfRepeat = kmeansResolver.getNumOfRepeat();
-            List<ClusterPoint> points = kmeansResolver.getPoints();//pop
-            drawChart(numOfRepeat, centroids, points, chartCSV);
+//
+//            final KmeansResolver kmeansResolver = simulations.get(currentGraphIndex);
+//
+//            List<ClusterPoint> centroids = kmeansResolver.getCentroids();
+//            int numOfRepeat = kmeansResolver.getNumOfRepeat();
+//            List<ClusterPoint> points = kmeansResolver.getPoints();//pop
+            //drawChart(numOfRepeat, centroids, points, chartCSV);
 
         } catch (IOException ex) {
             Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        currentGraphIndex = 0;
         
-        tablePopulationObservableList.clear();
-        sizeOfElements = simulations.get(0).getPoints().size();
-        for (int i = 0; i < sizeOfElements; i++) {
-            tablePopulationObservableList.add(new TableClusterElement("none", "element n°=" + i));
-        }
+      //  tablePopulationObservableList.clear();
+//        sizeOfElements = simulations.get(0).getPoints().size();
+//        for (int i = 0; i < sizeOfElements; i++) {
+//            tablePopulationObservableList.add(new TableClusterElement("none", "element n°=" + i));
+//        }
 
+        GameTheoryResolver gameTheoryResolver = new GameTheoryResolver(simulations);
+        //System.out.println("game thoer" + gameTheoryResolver.getPairResults());
+        // debut nouveau modif
+        PFEDataFormator pfeDataFormator = new PFEDataFormator(gameTheoryResolver.getPairResults());
+        pfeDataFormator.setClassData(clusteringDataPairs);
+        //JOptionPane.showConfirmDialog(null, "wait");
+        //pfeDataFormator
+        
+        tableStudyResultList.clear();
+        
+        HashMap<Integer, List> members = pfeDataFormator.getMembers();
+        for (int i = 0; i < members.size(); i++) {
+            final int wellClassedSize = pfeDataFormator.getWellClassedMembers().get(i).size();
+            final int benchmarkSize = pfeDataFormator.getPreviousMembers().get(i).size();
+            tableStudyResultList.add(new TableClusterElement(""+benchmarkSize,
+                    ""+pfeDataFormator.getMembers().get(i).size(), ""+wellClassedSize,""+ ((float)wellClassedSize/(float)benchmarkSize)*100));
+        }
+        
     }
 
     private void initializeTable() {
-        clusterColumn.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("cluster"));
-        indvColumn.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("individu"));
-        tablePopulationObservableList = FXCollections.observableArrayList();
-        popTable.setItems(tablePopulationObservableList);
-        currentGraphIndex = 0;
+//        clusterColumn.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("cluster"));
+//        indvColumn.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("individu"));
+       // tablePopulationObservableList = FXCollections.observableArrayList();
+       
+        membreAvant.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("individu"));
+        membreApres.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("cluster"));
+        classColumn.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("noise"));
+        taux.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("taux"));
+        tableStudyResultList = FXCollections.observableArrayList();
+        popTable.setItems(tableStudyResultList);
+       
 
     }
 
-    @FXML
-    public void showPrevious(ActionEvent e) {
-        if (currentGraphIndex > 0) {
-            currentGraphIndex--;
-
-
-        }else
-        {
-            currentGraphIndex = 0;
-        }
-            final KmeansResolver kmeansResolver = simulations.get(currentGraphIndex);
-            List<ClusterPoint> centroids = kmeansResolver.getCentroids();
-            int numOfRepeat = kmeansResolver.getNumOfRepeat();
-            List<ClusterPoint> points = kmeansResolver.getPoints();//pop
-            drawChart(numOfRepeat, centroids, points, chartCSV);
-            chartCSV.setTitle("graphe de simulation entre :"+simulations.get(currentGraphIndex).getSimulationName());
-    }
-
-    @FXML
-    public void showNext(ActionEvent e) {
-        if (sizeOfElements-1 != currentGraphIndex) {
-            currentGraphIndex++;
-
-
-        }else{
-            currentGraphIndex = 0;
-        }
-        if (currentGraphIndex >= simulations.size()) {
-            currentGraphIndex = simulations.size()-1;
-        }
-            final KmeansResolver kmeansResolver = simulations.get(currentGraphIndex);
-            List<ClusterPoint> centroids = kmeansResolver.getCentroids();
-            int numOfRepeat = kmeansResolver.getNumOfRepeat();
-            List<ClusterPoint> points = kmeansResolver.getPoints();//pop
-            drawChart(numOfRepeat, centroids, points, chartCSV);
-            chartCSV.setTitle("graphe de simulation entre :"+simulations.get(currentGraphIndex).getSimulationName());
-        
-    }
     
-    @FXML
-    void lancerAnalyse(ActionEvent event) {
-        
-            GameTheoryResolver gameTheoryResolver = new GameTheoryResolver(simulations);
-        final ClusterDetector clusterDetector = new ClusterDetector(0);
-            gameTheoryResolver.getPairResults().stream().forEach(clusterDetector);
-            
-    }
-
-    private class ClusterDetector implements Consumer<GameTheoryResolver.PairResult> {
-
-        private  int i;
-
-        public ClusterDetector(int i) {
-            this.i = i;
-        }
-
-        @Override
-        public void accept(GameTheoryResolver.PairResult pair) {
-            tablePopulationObservableList.get(i).setCluster(pair.getDetectedCluster()+"");
-            System.out.println("i = "+i);
-            i++;
-        }
-    }
 }

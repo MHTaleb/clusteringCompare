@@ -127,4 +127,10 @@ public class CSVPointBuilder {
         return clusterSuperpositions;
     }
 
+    public List<ClusteringDataPair> getClusteringDataPairs() {
+        return clusteringDataPairs;
+    }
+    
+    
+
 }
