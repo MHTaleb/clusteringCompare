@@ -273,7 +273,7 @@ public class FXMLController implements Initializable {
         }
         final int PARAM_AFFICHAGE_1 = 1;
         final int PARAM_AFFICHAGE_2 = 4;
-
+        // notre algo
         if (algo1.isSelected()) {
             
             Hashtable<String, List<ClusterPoint>> clusteringDimensions = csvpb.getClusteringDimensions();
@@ -316,13 +316,20 @@ public class FXMLController implements Initializable {
 
             tableStudyResultList.clear();
 
+            int currentBenchMarkSize = 0;
+            int currentWellClassedSize = 0;
             HashMap<Integer, List> members = pfeDataFormator.getMembers();
             for (int i = 0; i < members.size(); i++) {
                 final int wellClassedSize = pfeDataFormator.getWellClassedMembers().get(i).size();
                 final int benchmarkSize = pfeDataFormator.getPreviousMembers().get(i).size();
                 tableStudyResultList.add(new TableClusterElement("" + benchmarkSize,
                         "" + pfeDataFormator.getMembers().get(i).size(), "" + wellClassedSize, "" + ((float) wellClassedSize / (float) benchmarkSize) * 100));
+                currentBenchMarkSize+=benchmarkSize;
+                currentWellClassedSize+=wellClassedSize;
             }
+             tableStudyResultList.add(new TableClusterElement("" + (currentBenchMarkSize),
+                            "" + currentBenchMarkSize, "" + currentWellClassedSize, "" + ((float) currentWellClassedSize / (float) currentBenchMarkSize) * 100));
+                
 
             // ajouter resumer depuis le reste des information introduite
             chartCSVBruit.dataProperty().get().clear();
@@ -357,7 +364,7 @@ public class FXMLController implements Initializable {
 
             }
         }
-
+        // chaouch algo
             if (algo2.isSelected()) {
                 ChaouchAlgorithm algorithm = new ChaouchAlgorithm(clusteringDataPairs);
                 algorithm.resolve((int) nombreClusterDiabete.getValue());
@@ -381,6 +388,7 @@ public class FXMLController implements Initializable {
 
                 System.out.println("centersPrevious" + centersPrevious);
                 int currentBenchMarkSize = 0;
+                int currentWellClassedSize = 0;
                 for (int i = 0; i < nombreClusterDiabete.getValue(); i++) {
                     int count = 0;
                     for (Integer integer : classesAlgorithme) {
@@ -397,9 +405,14 @@ public class FXMLController implements Initializable {
                     final int benchmarkSize = centersPrevious.lastIndexOf(i) - currentBenchMarkSize + 1;
                     tableStudyResultList.add(new TableClusterElement("" + (benchmarkSize),
                             "" + count, "" + wellClassedSize, "" + ((float) wellClassedSize / (float) benchmarkSize) * 100));
-
+                    currentWellClassedSize+=wellClassedSize;
                     currentBenchMarkSize+= benchmarkSize;
                 }
+                    tableStudyResultList.add(new TableClusterElement("" + (currentBenchMarkSize),
+                            "" + currentBenchMarkSize, "" + currentWellClassedSize, "" + ((float) currentWellClassedSize / (float) currentBenchMarkSize) * 100));
+                
+                
+                
                 System.out.println("classesAlgorithme" + classesAlgorithme);
 
                 chartCSVBruit.dataProperty().get().clear();
@@ -440,6 +453,8 @@ public class FXMLController implements Initializable {
                 }
 
             }
+            
+            
         
     }
 

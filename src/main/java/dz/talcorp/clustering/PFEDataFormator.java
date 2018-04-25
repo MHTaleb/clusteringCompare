@@ -84,7 +84,12 @@ class PFEDataFormator {
             
             previousMembers.forEach((index,mmbrs)->{
                 mmbrs.forEach(member->{
-                    if(members.get(index).contains(member))wellClassedMembers.get(index).add(member);
+                    try {
+                        
+                        if(members.get(index).contains(member))wellClassedMembers.get(index).add(member);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 });
             });
             System.out.println("wellclassed \n"+wellClassedMembers);
