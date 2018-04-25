@@ -1,15 +1,19 @@
 package dz.talcorp.clustering;
 
+import algorithme.ChaouchAlgorithm;
 import algorithme.GameTheoryResolver;
 import algorithme.KmeansResolver;
 import builder.CSVPointBuilder;
 import builder.ClusteringDataPair;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
+import com.sun.javafx.collections.ElementObservableListDecorator;
 import entity.ClusterPoint;
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -43,28 +48,20 @@ import javafx.stage.FileChooser;
 public class FXMLController implements Initializable {
 
     @FXML
-    private JFXButton next;
-
-    @FXML
-    private JFXButton previous;
-
-    @FXML
     private TableView<TableClusterElement> popTable;
-    
+
     @FXML
     private TableColumn<TableClusterElement, String> membreAvant;
 
-      @FXML
+    @FXML
     private TableColumn<TableClusterElement, String> taux;
 
     @FXML
     private TableColumn<TableClusterElement, String> classColumn;
 
-    
     @FXML
     private TableColumn<TableClusterElement, String> membreApres;
 
-    
     @FXML
     private HBox csvMaps;
 
@@ -99,6 +96,12 @@ public class FXMLController implements Initializable {
     private ScatterChart<Number, Number> chartCSV;
     private ScatterChart<Number, Number> chartCSVBruit;
     private ObservableList<TableClusterElement> tableStudyResultList;
+    @FXML
+    private JFXRadioButton algo2;
+    @FXML
+    private JFXRadioButton algo1;
+    @FXML
+    private HBox nbrClassDetecter;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -154,7 +157,7 @@ public class FXMLController implements Initializable {
                 selectedChart.getData().add(seriesMembre);
                 selectedChart.getData().add(seriesCentre);
                 i++;
-                
+
             }
         });
     }
@@ -193,35 +196,54 @@ public class FXMLController implements Initializable {
 
     private void initializeChart() {
         // normal kmeans chart
-        NumberAxis axisX = new NumberAxis( -500, 500, 10);
-        NumberAxis axisY = new NumberAxis( -500, 500, 10);
-        
+        NumberAxis axisX = new NumberAxis(-500, 500, 10);
+        NumberAxis axisY = new NumberAxis(-500, 500, 10);
+
         axisX.setAutoRanging(true);
         axisX.setLabel("X");
-	axisX.setForceZeroInRange(false);
-	axisY.setAutoRanging(true);
-	axisY.setLabel("Y");
-	axisY.setForceZeroInRange(false);
-        
+        axisX.setForceZeroInRange(false);
+        axisY.setAutoRanging(true);
+        axisY.setLabel("Y");
+        axisY.setForceZeroInRange(false);
+
         chart = new ScatterChart<>(axisX, axisY);
         chart.autosize();
         chart.prefWidthProperty().bind(chartBox.widthProperty());
         chartBox.getChildren().add(chart);
 
+         axisX = new NumberAxis(-500, 500, 10);
+         axisY = new NumberAxis(-500, 500, 10);
+
+        axisX.setAutoRanging(true);
+        axisX.setLabel("X");
+        axisX.setForceZeroInRange(false);
+        axisY.setAutoRanging(true);
+        axisY.setLabel("Y");
+        axisY.setForceZeroInRange(false);
         // game theory chart
         chartCSV = new ScatterChart<>(axisX, axisY);
+        chartCSV.setTitle("clustering final");
         chartCSV.autosize();
         chartCSV.prefWidthProperty().bind(csvMaps.widthProperty());
         chartCSV.prefHeightProperty().bind(csvMaps.heightProperty());
         csvMaps.getChildren().add(chartCSV);
+        
+         axisX = new NumberAxis(-500, 500, 10);
+         axisY = new NumberAxis(-500, 500, 10);
+
+        axisX.setAutoRanging(true);
+        axisX.setLabel("X");
+        axisX.setForceZeroInRange(false);
+        axisY.setAutoRanging(true);
+        axisY.setLabel("Y");
+        axisY.setForceZeroInRange(false);
         chartCSVBruit = new ScatterChart<>(axisX, axisY);
+        chartCSVBruit.setTitle("clustering Bruit");
         chartCSVBruit.autosize();
         chartCSVBruit.prefWidthProperty().bind(csvMaps.widthProperty());
         chartCSVBruit.prefHeightProperty().bind(csvMaps.heightProperty());
         csvMaps.getChildren().add(chartCSVBruit);
-        
-       
-        
+
     }
 
     private File selectedFile;
@@ -237,33 +259,40 @@ public class FXMLController implements Initializable {
         chemin.setText(selectedFile.getAbsolutePath());
     }
 
-
     @FXML
     void LancerSimulationcsv(ActionEvent event) {
-        
+
         List<ClusteringDataPair> clusteringDataPairs = null;
         try {
             csvpb = new CSVPointBuilder(selectedFile.getAbsolutePath());
             clusteringDataPairs = csvpb.getClusteringDataPairs();
-            System.out.println(clusteringDataPairs);
+            System.out.println(clusteringDataPairs); // matrice des données
+
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        final int PARAM_AFFICHAGE_1 = 1;
+        final int PARAM_AFFICHAGE_2 = 4;
+
+        if (algo1.isSelected()) {
+
             Hashtable<String, List<ClusterPoint>> clusteringDimensions = csvpb.getClusteringDimensions();
             simulations = new ArrayList<>();
 
             clusteringDimensions.keySet().stream().forEach(key -> {
-                if(!(
-                        key.toLowerCase().trim().startsWith("class ") || 
-                        //key.toLowerCase().trim().startsWith("id") || 
-                        key.toLowerCase().trim().endsWith(" class") || 
-                        key.toLowerCase().trim().endsWith("id") || 
-                        key.toLowerCase().trim().equals("id") )){
+                if (!(key.toLowerCase().trim().startsWith("class ")
+                        || //key.toLowerCase().trim().startsWith("id") || 
+                        key.toLowerCase().trim().endsWith(" class")
+                        || key.toLowerCase().trim().endsWith("id")
+                        || key.toLowerCase().trim().equals("id"))) {
                     final KmeansResolver kmeansResolver = new KmeansResolver(clusteringDimensions.get(key), (int) nombreClusterDiabete.getValue());
                     System.out.println("simulation " + key + " is done");
                     kmeansResolver.setSimulationName(key);
                     simulations.add(kmeansResolver);
-                    
+
                 }
             });
-                System.out.println("simulation  is done");
+            System.out.println("simulation  is done");
 //
 //            final KmeansResolver kmeansResolver = simulations.get(currentGraphIndex);
 //
@@ -272,51 +301,155 @@ public class FXMLController implements Initializable {
 //            List<ClusterPoint> points = kmeansResolver.getPoints();//pop
             //drawChart(numOfRepeat, centroids, points, chartCSV);
 
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
-      //  tablePopulationObservableList.clear();
+            //  tablePopulationObservableList.clear();
 //        sizeOfElements = simulations.get(0).getPoints().size();
 //        for (int i = 0; i < sizeOfElements; i++) {
 //            tablePopulationObservableList.add(new TableClusterElement("none", "element n°=" + i));
 //        }
+            GameTheoryResolver gameTheoryResolver = new GameTheoryResolver(simulations);
+            //System.out.println("game thoer" + gameTheoryResolver.getPairResults());
+            // debut nouveau modif
+            PFEDataFormator pfeDataFormator = new PFEDataFormator(gameTheoryResolver.getPairResults());
+            pfeDataFormator.setClassData(clusteringDataPairs);
+            //JOptionPane.showConfirmDialog(null, "wait");
+            //pfeDataFormator
 
-        GameTheoryResolver gameTheoryResolver = new GameTheoryResolver(simulations);
-        //System.out.println("game thoer" + gameTheoryResolver.getPairResults());
-        // debut nouveau modif
-        PFEDataFormator pfeDataFormator = new PFEDataFormator(gameTheoryResolver.getPairResults());
-        pfeDataFormator.setClassData(clusteringDataPairs);
-        //JOptionPane.showConfirmDialog(null, "wait");
-        //pfeDataFormator
-        
-        tableStudyResultList.clear();
-        
-        HashMap<Integer, List> members = pfeDataFormator.getMembers();
-        for (int i = 0; i < members.size(); i++) {
-            final int wellClassedSize = pfeDataFormator.getWellClassedMembers().get(i).size();
-            final int benchmarkSize = pfeDataFormator.getPreviousMembers().get(i).size();
-            tableStudyResultList.add(new TableClusterElement(""+benchmarkSize,
-                    ""+pfeDataFormator.getMembers().get(i).size(), ""+wellClassedSize,""+ ((float)wellClassedSize/(float)benchmarkSize)*100));
+            tableStudyResultList.clear();
+
+            HashMap<Integer, List> members = pfeDataFormator.getMembers();
+            for (int i = 0; i < members.size(); i++) {
+                final int wellClassedSize = pfeDataFormator.getWellClassedMembers().get(i).size();
+                final int benchmarkSize = pfeDataFormator.getPreviousMembers().get(i).size();
+                tableStudyResultList.add(new TableClusterElement("" + benchmarkSize,
+                        "" + pfeDataFormator.getMembers().get(i).size(), "" + wellClassedSize, "" + ((float) wellClassedSize / (float) benchmarkSize) * 100));
+            }
+
+            // ajouter resumer depuis le reste des information introduite
+            chartCSVBruit.dataProperty().get().clear();
+            chartCSV.dataProperty().get().clear();
+            for (int i = 0; i < nombreClusterDiabete.getValue(); i++) {
+
+                final ObservableList<XYChart.Data<Number, Number>> observableArrayList = FXCollections.observableArrayList();
+
+                for (int j = 0; j < pfeDataFormator.getWellClassedMembers().get(i).size(); j++) {
+                    String node = (String) pfeDataFormator.getWellClassedMembers().get(i).get(j);
+                    int nodeIndex = Integer.parseInt(node.replace("node", ""));
+                    
+                    observableArrayList.add(new XYChart.Data<>(Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_1).getPoints().get(nodeIndex).getValue()), Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_2).getPoints().get(nodeIndex).getValue())));
+                }
+
+                final XYChart.Series<Number, Number> series = new XYChart.Series<>(observableArrayList);
+                series.setName("class" + i);
+                chartCSV.dataProperty().get().add(series);
+
+                final ObservableList<XYChart.Data<Number, Number>> observableArrayListBruit = FXCollections.observableArrayList();
+
+                for (int j = 0; j < pfeDataFormator.getPreviousMembers().get(i).size(); j++) {
+                    String node = (String) pfeDataFormator.getPreviousMembers().get(i).get(j);
+                    int nodeIndex = Integer.parseInt(node.replace("node", ""))-1;
+                    
+                    observableArrayListBruit.add(new XYChart.Data<>(Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_1).getPoints().get(nodeIndex).getValue()), Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_2).getPoints().get(nodeIndex).getValue())));
+                }
+
+                final XYChart.Series<Number, Number> seriesBruit = new XYChart.Series<>(observableArrayListBruit);
+                seriesBruit.setName("class" + i);
+                chartCSVBruit.dataProperty().get().add(seriesBruit);
+
+            }
         }
+
+            if (algo2.isSelected()) {
+                ChaouchAlgorithm algorithm = new ChaouchAlgorithm(clusteringDataPairs);
+                algorithm.resolve((int) nombreClusterDiabete.getValue());
+                System.out.println("algorithme " + algorithm);
+
+                tableStudyResultList.clear();
+
+                Predicate<? super ClusteringDataPair> classFilter = cdp -> {
+                    return cdp.getColumn().toLowerCase().trim().equals("class");
+                };
+
+                ClusteringDataPair classColumnAlgo2 = clusteringDataPairs.stream().filter(classFilter).findFirst().get();
+
+                final List<Integer> centersPrevious = new ArrayList();
+
+                classColumnAlgo2.getPoints().stream().forEach(center -> {
+                    centersPrevious.add(center.getValue().intValue());
+                });
+
+                List<Integer> classesAlgorithme = algorithm.getClasses();
+
+                System.out.println("centersPrevious" + centersPrevious);
+                int currentBenchMarkSize = 0;
+                for (int i = 0; i < nombreClusterDiabete.getValue(); i++) {
+                    int count = 0;
+                    for (Integer integer : classesAlgorithme) {
+                        if (integer == i) {
+                            count++;
+                        }
+                    }
+                    int wellClassedSize = 0;
+                    for (int j = 0; j < centersPrevious.size(); j++) {
+                        if (Objects.equals(centersPrevious.get(j), classesAlgorithme.get(j)) && centersPrevious.get(j) == i) {
+                            wellClassedSize++;
+                        }
+                    }
+                    final int benchmarkSize = centersPrevious.lastIndexOf(i) - currentBenchMarkSize + 1;
+                    tableStudyResultList.add(new TableClusterElement("" + (benchmarkSize),
+                            "" + count, "" + wellClassedSize, "" + ((float) wellClassedSize / (float) benchmarkSize) * 100));
+
+                    currentBenchMarkSize = benchmarkSize;
+                }
+                System.out.println("classesAlgorithme" + classesAlgorithme);
+
+                chartCSVBruit.dataProperty().get().clear();
+                chartCSV.dataProperty().get().clear();
+                for (int i = 0; i < nombreClusterDiabete.getValue(); i++) {
+
+                    final ObservableList<XYChart.Data<Number, Number>> observableArrayList = FXCollections.observableArrayList();
+
+                    for (int j = 0; j < centersPrevious.size(); j++) {
+                        if (Objects.equals(centersPrevious.get(j), classesAlgorithme.get(j)) && centersPrevious.get(j) == i) {
+                            observableArrayList.add(new XYChart.Data<>(Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_1).getPoints().get(j).getValue()), Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_2).getPoints().get(j).getValue())));
+                        }
+                    }
+
+                    final XYChart.Series<Number, Number> series = new XYChart.Series<>(observableArrayList);
+                    series.setName("class" + i);
+                    chartCSV.dataProperty().get().add(series);
+
+                    final ObservableList<XYChart.Data<Number, Number>> observableArrayListBruit = FXCollections.observableArrayList();
+
+                    for (int j = 0; j < centersPrevious.size(); j++) {
+                        if (centersPrevious.get(j) == i) {
+                            observableArrayListBruit.add(new XYChart.Data<>(Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_1).getPoints().get(j).getValue()), Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_2).getPoints().get(j).getValue())));
+                        }
+                    }
+
+                    final XYChart.Series<Number, Number> seriesBruit = new XYChart.Series<>(observableArrayListBruit);
+                    seriesBruit.setName("class" + i);
+                    chartCSVBruit.dataProperty().get().add(seriesBruit);
+
+                }
+
+            }
         
     }
+
+    
 
     private void initializeTable() {
 //        clusterColumn.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("cluster"));
 //        indvColumn.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("individu"));
-       // tablePopulationObservableList = FXCollections.observableArrayList();
-       
+        // tablePopulationObservableList = FXCollections.observableArrayList();
+
         membreAvant.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("individu"));
         membreApres.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("cluster"));
         classColumn.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("noise"));
         taux.setCellValueFactory(new PropertyValueFactory<TableClusterElement, String>("taux"));
         tableStudyResultList = FXCollections.observableArrayList();
         popTable.setItems(tableStudyResultList);
-       
 
     }
 
-    
 }

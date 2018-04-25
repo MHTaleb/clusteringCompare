@@ -88,15 +88,7 @@ public class CSVPointBuilder {
 //            System.out.println(clusteringDataPairs);
             
             Hashtable<String, List<ClusterPoint>> clusteringDimensions = getClusteringDimensions();
-            clusteringDimensions.entrySet().forEach(set->{
-//                System.out.println("");
-//                System.out.println("/////////////////////////////////////////////////////////");
-//                System.out.println("/////////////////////////////////////////////////////////");
-//                System.out.println("/////////////////////////////////////////////////////////");
-//                System.out.println("");
-//                System.out.println("set = "+set.getKey());
-//                System.out.println("values = "+set.getValue());
-            });
+         
     }
 
 }

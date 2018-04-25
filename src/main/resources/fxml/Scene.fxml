@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.text.*?>
@@ -73,7 +74,7 @@
                                  </children></AnchorPane>
                           </content>
                         </Tab>
-                        <Tab text="Diabète">
+                        <Tab text="Benchmark">
                           <content>
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
@@ -84,8 +85,21 @@
                                                 <Insets left="34.0" right="34.0" />
                                              </padding>
                                              <children>
-                                                <JFXTextField fx:id="chemin" editable="false" focusColor="#299e3a" labelFloat="true" prefHeight="25.0" prefWidth="57.0" promptText="Chemin" text="c:/" unFocusColor="#0e9654" HBox.hgrow="ALWAYS" />
-                                                <JFXButton onAction="#openFileChooser" prefHeight="42.0" prefWidth="136.0" ripplerFill="#40476d" styleClass="open_file_icon" text="Ouvrir" />
+                                                <JFXRadioButton fx:id="algo1" selected="true" text="Algorithme1">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="group" />
+                                                   </toggleGroup>
+                                                </JFXRadioButton>
+                                                <JFXRadioButton fx:id="algo2" text="Algorithme2" toggleGroup="$group">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </JFXRadioButton>
+                                                <JFXTextField fx:id="chemin" editable="false" focusColor="#299e3a" labelFloat="true" prefHeight="25.0" prefWidth="436.0" promptText="Chemin" text="c:/" unFocusColor="#0e9654" HBox.hgrow="ALWAYS" />
+                                                <JFXButton onAction="#openFileChooser" prefHeight="42.0" prefWidth="95.0" ripplerFill="#40476d" styleClass="open_file_icon" text="Ouvrir" />
                                              </children>
                                           </HBox>
                                           <HBox fx:id="nbrClassDetecter" prefHeight="38.0" prefWidth="838.0" spacing="17.0">
@@ -95,7 +109,7 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXSlider fx:id="nombreClusterDiabete" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="5" showTickLabels="true" showTickMarks="true" value="1.0" HBox.hgrow="ALWAYS" />
+                                                <JFXSlider fx:id="nombreClusterDiabete" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" HBox.hgrow="ALWAYS" />
                                              </children>
                                              <VBox.margin>
                                                 <Insets />
