@@ -275,7 +275,7 @@ public class FXMLController implements Initializable {
         final int PARAM_AFFICHAGE_2 = 4;
 
         if (algo1.isSelected()) {
-
+            
             Hashtable<String, List<ClusterPoint>> clusteringDimensions = csvpb.getClusteringDimensions();
             simulations = new ArrayList<>();
 
@@ -331,8 +331,8 @@ public class FXMLController implements Initializable {
 
                 final ObservableList<XYChart.Data<Number, Number>> observableArrayList = FXCollections.observableArrayList();
 
-                for (int j = 0; j < pfeDataFormator.getWellClassedMembers().get(i).size(); j++) {
-                    String node = (String) pfeDataFormator.getWellClassedMembers().get(i).get(j);
+                for (int j = 0; j < pfeDataFormator.getMembers().get(i).size(); j++) {
+                    String node = (String) pfeDataFormator.getMembers().get(i).get(j);
                     int nodeIndex = Integer.parseInt(node.replace("node", ""));
                     
                     observableArrayList.add(new XYChart.Data<>(Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_1).getPoints().get(nodeIndex).getValue()), Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_2).getPoints().get(nodeIndex).getValue())));
@@ -347,7 +347,7 @@ public class FXMLController implements Initializable {
                 for (int j = 0; j < pfeDataFormator.getPreviousMembers().get(i).size(); j++) {
                     String node = (String) pfeDataFormator.getPreviousMembers().get(i).get(j);
                     int nodeIndex = Integer.parseInt(node.replace("node", ""))-1;
-                    
+                    System.out.println("node index "+nodeIndex+" noise");
                     observableArrayListBruit.add(new XYChart.Data<>(Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_1).getPoints().get(nodeIndex).getValue()), Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_2).getPoints().get(nodeIndex).getValue())));
                 }
 
@@ -398,7 +398,7 @@ public class FXMLController implements Initializable {
                     tableStudyResultList.add(new TableClusterElement("" + (benchmarkSize),
                             "" + count, "" + wellClassedSize, "" + ((float) wellClassedSize / (float) benchmarkSize) * 100));
 
-                    currentBenchMarkSize = benchmarkSize;
+                    currentBenchMarkSize+= benchmarkSize;
                 }
                 System.out.println("classesAlgorithme" + classesAlgorithme);
 
@@ -409,8 +409,12 @@ public class FXMLController implements Initializable {
                     final ObservableList<XYChart.Data<Number, Number>> observableArrayList = FXCollections.observableArrayList();
 
                     for (int j = 0; j < centersPrevious.size(); j++) {
-                        if (Objects.equals(centersPrevious.get(j), classesAlgorithme.get(j)) && centersPrevious.get(j) == i) {
-                            observableArrayList.add(new XYChart.Data<>(Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_1).getPoints().get(j).getValue()), Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_2).getPoints().get(j).getValue())));
+                        //if (Objects.equals(centersPrevious.get(j), classesAlgorithme.get(j)) && centersPrevious.get(j) == i) {
+                        if (classesAlgorithme.get(j) == i) {
+                            final Float x = clusteringDataPairs.get(PARAM_AFFICHAGE_1).getPoints().get(j).getValue();
+                            final Float y = clusteringDataPairs.get(PARAM_AFFICHAGE_2).getPoints().get(j).getValue();
+                            System.out.println("x = "+x+"   y = "+y +"  clust");
+                            observableArrayList.add(new XYChart.Data<>(Double.valueOf(x), Double.valueOf(y)));
                         }
                     }
 
@@ -422,7 +426,10 @@ public class FXMLController implements Initializable {
 
                     for (int j = 0; j < centersPrevious.size(); j++) {
                         if (centersPrevious.get(j) == i) {
-                            observableArrayListBruit.add(new XYChart.Data<>(Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_1).getPoints().get(j).getValue()), Double.valueOf(clusteringDataPairs.get(PARAM_AFFICHAGE_2).getPoints().get(j).getValue())));
+                            final Float x = clusteringDataPairs.get(PARAM_AFFICHAGE_1).getPoints().get(j).getValue();
+                            final Float y = clusteringDataPairs.get(PARAM_AFFICHAGE_2).getPoints().get(j).getValue();
+                            System.out.println("x = "+x+"   y = "+y +"  noise");
+                            observableArrayListBruit.add(new XYChart.Data<>(Double.valueOf(x), Double.valueOf(y)));
                         }
                     }
 
