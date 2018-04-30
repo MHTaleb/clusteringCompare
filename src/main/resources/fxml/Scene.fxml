@@ -93,12 +93,20 @@
                                                       <ToggleGroup fx:id="group" />
                                                    </toggleGroup>
                                                 </JFXRadioButton>
+                                                <JFXTextField fx:id="gValue" focusColor="#299e3a" labelFloat="true" promptText="g" unFocusColor="#0e9654">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </JFXTextField>
                                                 <JFXRadioButton fx:id="algo2" text="Algorithme2" toggleGroup="$group">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </JFXRadioButton>
-                                                <JFXTextField fx:id="chemin" editable="false" focusColor="#299e3a" labelFloat="true" prefHeight="25.0" prefWidth="436.0" promptText="Chemin" text="c:/" unFocusColor="#0e9654" HBox.hgrow="ALWAYS" />
+                                                <JFXTextField fx:id="chemin" editable="false" focusColor="#299e3a" labelFloat="true" prefHeight="25.0" prefWidth="436.0" promptText="Chemin" text="c:/" unFocusColor="#0e9654" HBox.hgrow="ALWAYS">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font></JFXTextField>
                                                 <JFXButton onAction="#openFileChooser" prefHeight="42.0" prefWidth="95.0" ripplerFill="#40476d" styleClass="open_file_icon" text="Ouvrir" />
                                              </children>
                                           </HBox>

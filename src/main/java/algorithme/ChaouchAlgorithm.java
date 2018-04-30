@@ -44,7 +44,7 @@ public class ChaouchAlgorithm {
     }
     List<List<Float>> currentCentroid;
 
-    public void resolve(int numberOfClasses) {
+    public void resolve(int numberOfClasses, final int G) {
 
         long start = System.currentTimeMillis();
 
@@ -64,7 +64,7 @@ public class ChaouchAlgorithm {
                 int selectedIndex = 0;
                 int currentIndex = 0;
                 for (List<Float> center : currentCentroid) {
-                    float currentDistance = getDistance(element, center);
+                    float currentDistance = getDistance(element, center, G);
                     if (currentDistance <= minDistance) {
                         minDistance = currentDistance;
                         selectedIndex = currentIndex;
@@ -114,10 +114,10 @@ public class ChaouchAlgorithm {
         System.out.println("end of clustering " + end + " seconds and " + loop + " repeats");
     }
 
-    private float getDistance(List<Float> element, List<Float> center) {
+    private float getDistance(List<Float> element, List<Float> center, int g) {
         float sum = 0;
         for (int i = 0; i < element.size(); i++) {
-            sum += Math.pow(element.get(i) - center.get(i), 2);
+            sum += Math.pow(Math.sqrt(Math.pow(element.get(i) - center.get(i), 2)),g);
         }
         return (float) Math.sqrt(sum);
     }

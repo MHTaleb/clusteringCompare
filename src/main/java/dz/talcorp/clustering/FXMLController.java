@@ -39,6 +39,7 @@ import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -102,6 +103,10 @@ public class FXMLController implements Initializable {
     private JFXRadioButton algo1;
     @FXML
     private HBox nbrClassDetecter;
+    @FXML
+    private ToggleGroup group;
+    @FXML
+    private JFXTextField gValue;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -110,6 +115,8 @@ public class FXMLController implements Initializable {
         initializeChart();
         initializeTable();
 
+        gValue.disableProperty().bind(algo1.selectedProperty().not());
+        
     }
 
     @FXML
@@ -274,7 +281,7 @@ public class FXMLController implements Initializable {
         final int PARAM_AFFICHAGE_1 = 1;
         final int PARAM_AFFICHAGE_2 = 4;
         // notre algo
-        if (algo1.isSelected()) {
+        if (algo2.isSelected()) {
             
             Hashtable<String, List<ClusterPoint>> clusteringDimensions = csvpb.getClusteringDimensions();
             simulations = new ArrayList<>();
@@ -365,9 +372,9 @@ public class FXMLController implements Initializable {
             }
         }
         // chaouch algo
-            if (algo2.isSelected()) {
+            if (algo1.isSelected()) {
                 ChaouchAlgorithm algorithm = new ChaouchAlgorithm(clusteringDataPairs);
-                algorithm.resolve((int) nombreClusterDiabete.getValue());
+                algorithm.resolve((int) nombreClusterDiabete.getValue(), Integer.parseInt(gValue.getText().trim()));
                 System.out.println("algorithme " + algorithm);
 
                 tableStudyResultList.clear();
