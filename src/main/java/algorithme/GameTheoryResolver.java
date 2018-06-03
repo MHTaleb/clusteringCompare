@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- *
+ * une classe qui va resoudre le probleme de comparaison aveugle et kmeans paire 
+ * a paire et implemente la theorie des jeux en moderation des resultat de tout les simulation
  * @author taleb
  */
 public class GameTheoryResolver {
@@ -26,7 +27,12 @@ public class GameTheoryResolver {
 
     public GameTheoryResolver() {
     }
-
+    
+    /**
+     * instancier un resoneur qui va decider de la classification dans tt les cas possible est choisir le cas optimal
+     * 
+     * @param kmeanResults liste de simulations
+     */
     public GameTheoryResolver(List<KmeansResolver> kmeanResults) {
         this.kmeanResults = new ArrayList<>(kmeanResults);
         pairResults = new ArrayList<>();
@@ -38,6 +44,12 @@ public class GameTheoryResolver {
         this.kmeanResults = kmeanResults;
     }
 
+    /**
+     * L algoritme de resolution une methode interne caché a tt etulisation externe
+     * elle represente la methode decrite dans le document de l iris sepia et les forme 
+     * rectangle cercle ect ...
+     * 
+     */
     private void resolve() {
         final RecordsHandeler recordsHandeler = new RecordsHandeler();
 
@@ -80,7 +92,9 @@ public class GameTheoryResolver {
         public String toString() {
             return "\nlabel = " + nodeLabel + " \n " + results.entrySet();
         }
-
+        /**
+         * permet de detecter le cluster qui ete le plus apparant pour un individu dans tout les simulations effectué
+         */
         public int getDetectedCluster() {
             final Collection<Integer> values = results.values();
             return findFrequentNumber(values.toArray(new Integer[values.size()]));
@@ -159,6 +173,9 @@ public class GameTheoryResolver {
         }
     }
 
+    /**
+     * @return retourne le resultat du clustering de tout les paire combiner entre les atribut de la population
+     */
     public List<PairResult> getPairResults() {
         return pairResults;
     }

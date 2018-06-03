@@ -29,13 +29,13 @@ public class CSVPointBuilder {
 
     private final String FILE_PATH;
     private String[] HEADERS;
-    List<ClusteringDataPair> clusteringDataPairs;
+    List<ClusteringDataPair> clusteringDataColumn;
     
     public CSVPointBuilder(String chemin_fichier) throws IOException {
 
         this.FILE_PATH = chemin_fichier;
 
-        this.clusteringDataPairs = new ArrayList<>();
+        this.clusteringDataColumn = new ArrayList<>();
 
         Reader in = null;
 
@@ -57,7 +57,7 @@ public class CSVPointBuilder {
 
             //initialiser les map de clusters
             csvRecords.iterator().next().toMap().keySet().forEach(head->{
-                clusteringDataPairs.add(new ClusteringDataPair(head, new ArrayList<>()));
+                clusteringDataColumn.add(new ClusteringDataPair(head, new ArrayList<>()));
             });
             
             for (CSVRecord csvRecord : csvRecords) {
@@ -71,10 +71,10 @@ public class CSVPointBuilder {
 //                    System.out.println(entry.getKey());
 //                    System.out.println(entry.getValue());
                     Predicate<? super ClusteringDataPair> prdct = clusterData ->{
-                        return clusterData.getColumn().equals(entry.getKey());
+                        return clusterData.getColumnName().equals(entry.getKey());
                     };
-                    clusteringDataPairs.stream().filter(prdct).forEach(clusterData ->{
-                        clusterData.getPoints().add((int)index-1, new Line(Float.parseFloat(entry.getValue()), (int)index));
+                    clusteringDataColumn.stream().filter(prdct).forEach(clusterData ->{
+                        clusterData.getColumnPoints().add((int)index-1, new Line(Float.parseFloat(entry.getValue()), (int)index));
                     });
                     
                 }
@@ -85,31 +85,34 @@ public class CSVPointBuilder {
 //            System.out.println("/////////////////////////////////////////////////////////");
 //            System.out.println("/////////////////////////////////////////////////////////");
 //            System.out.println("");
-//            System.out.println(clusteringDataPairs);
+//            System.out.println(clusteringDataColumn);
             
             Hashtable<String, List<ClusterPoint>> clusteringDimensions = getClusteringDimensions();
          
     }
 
 }
-    
+    /**
+     * une methode qui va nous former des paire du csv charger
+     * @return liste des paire former depuis les collonmne
+     */
     public Hashtable<String,List<ClusterPoint>> getClusteringDimensions(){
         final Hashtable<String,List<ClusterPoint>> clusterSuperpositions = new Hashtable();
         
-        int size = clusteringDataPairs.size();
+        int size = clusteringDataColumn.size();
         for (int i = 0; i < size-1; i++) {
             for (int j = i; j < size; j++) {
                 final ArrayList<ClusterPoint> clusterPoints = new ArrayList<>();
-                final ClusteringDataPair firstPair = clusteringDataPairs.get(i);
-                final ClusteringDataPair secondPair = clusteringDataPairs.get(j);
-                final String firstPairID = firstPair.getColumn();
-                final String secondPairID = secondPair.getColumn();
+                final ClusteringDataPair firstPair = clusteringDataColumn.get(i);
+                final ClusteringDataPair secondPair = clusteringDataColumn.get(j);
+                final String firstPairID = firstPair.getColumnName();
+                final String secondPairID = secondPair.getColumnName();
                 
-                if(!firstPairID.equals(secondPairID)){
+                if(!firstPairID.equals(secondPairID) && (!firstPairID.toLowerCase().equals("class"))&& (!secondPairID.toLowerCase().equals("class"))){
                 
-                int dimension = firstPair.getPoints().size();
+                int dimension = firstPair.getColumnPoints().size();
                 for (int k = 0; k < dimension; k++) {
-                    clusterPoints.add(new ClusterPoint(firstPair.getPoints().get(k).getValue(), secondPair.getPoints().get(k).getValue()));
+                    clusterPoints.add(new ClusterPoint(firstPair.getColumnPoints().get(k).getValue(), secondPair.getColumnPoints().get(k).getValue()));
                 }
                 clusterSuperpositions.put(firstPairID+" "+secondPairID, clusterPoints);
                 }
@@ -119,8 +122,14 @@ public class CSVPointBuilder {
         return clusterSuperpositions;
     }
 
-    public List<ClusteringDataPair> getClusteringDataPairs() {
-        return clusteringDataPairs;
+    
+    /**
+     * cette fonction retourne le csv sous frome de tableau avec le titre de l attribut
+     * 
+     * @return chaque collone du csv avec ses valeur
+     */
+    public List<ClusteringDataPair> getClusteringDataColumn() {
+        return clusteringDataColumn;
     }
     
     

@@ -24,7 +24,9 @@ public class KmeansResolver {
     private List<ClusterPoint> previsouCentroids;
 
     /**
-     *
+     * cette classe a comme objectif de resoudre le probleme de clustering avec kmeans pour un ensemble de données avec une cardinalité x,y
+     * à la fin on aura une simulation finie ou on peu recuperer le resultat du clustering et les centroid avec les methode getCentroids() et
+     * getPoints()
      * @param numPoints la taille de la population
      * @param numClusters le nombre de cluster desiré
      */
@@ -45,7 +47,13 @@ public class KmeansResolver {
         resolve();
 
     }
-
+    /**
+     * cette classe a comme objectif de resoudre le probleme de clustering avec kmeans pour un ensemble de données avec une cardinalité x,y
+     * à la fin on aura une simulation finie ou on peu recuperer le resultat du clustering et les centroid avec les methode getCentroids() et
+     * getPoints()
+     * @param POINTS la population 
+     * @param numClusters le nombre de cluster a former
+     */
     public KmeansResolver(List<ClusterPoint> POINTS,int numClusters) {
         this.POINTS = new ArrayList<>(POINTS);
         this.CENTROIDS = new ArrayList<>();
@@ -70,7 +78,10 @@ public class KmeansResolver {
     private final int FIN = 2;
 
     private int numOfRepeat;
-
+    
+    /**
+     * methode interne jamais exposer a l utilisateur elle est l implementation d kmean et la resolution du probleme
+     */
     private void resolve() {
         this.numOfRepeat = 0;
         int step = 0;
@@ -126,10 +137,21 @@ public class KmeansResolver {
 
     }
 
+    
+    /**
+     * la fonction qui donne le resultat sous forme de centre
+     * 
+     * @return liste des centres de chaque cluster
+     */
     public List<ClusterPoint> getCentroids() {
         return CENTROIDS;
     }
-
+    
+    /**
+     * cette fonction retourne la population total avec l indice d appartenance au centre
+     * ou chaque individu va etre affecter a un cluster
+     * @return population resolut
+     */
     public List<ClusterPoint> getPoints() {
         return POINTS;
     }

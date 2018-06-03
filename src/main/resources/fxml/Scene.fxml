@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import com.jfoenix.controls.*?>
-<?import java.lang.*?>
-<?import javafx.scene.layout.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXDrawer?>
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import com.jfoenix.controls.JFXSlider?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="906.0" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dz.talcorp.clustering.FXMLController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="906.0" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dz.talcorp.clustering.FXMLController">
    <children>
       <BorderPane layoutX="209.0" layoutY="97.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
@@ -46,7 +56,7 @@
                                                       <Font name="Arial Bold" size="17.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXSlider fx:id="tailleCluster" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" prefHeight="14.0" prefWidth="603.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="2.0" HBox.hgrow="ALWAYS" />
+                                                <JFXSlider fx:id="tailleCluster" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" min="2.0" minorTickCount="0" prefHeight="14.0" prefWidth="603.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="2.0" HBox.hgrow="ALWAYS" />
                                              </children>
                                              <padding>
                                                 <Insets left="20.0" right="20.0" top="20.0" />
@@ -80,12 +90,9 @@
                                  <children>
                                     <VBox layoutX="6.0" prefHeight="200.0" prefWidth="100.0" spacing="34.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="34.0">
-                                             <padding>
-                                                <Insets left="34.0" right="34.0" />
-                                             </padding>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
                                              <children>
-                                                <JFXRadioButton fx:id="algo1" selected="true" text="Algorithme1">
+                                                <JFXRadioButton fx:id="algo1" ellipsisString="" onAction="#setChart" selected="true" text=" kmeans">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
@@ -93,21 +100,26 @@
                                                       <ToggleGroup fx:id="group" />
                                                    </toggleGroup>
                                                 </JFXRadioButton>
-                                                <JFXTextField fx:id="gValue" focusColor="#299e3a" labelFloat="true" promptText="g" unFocusColor="#0e9654">
+                                                <JFXTextField fx:id="gValue" focusColor="#299e3a" labelFloat="true" onKeyReleased="#showDistance" prefHeight="25.0" prefWidth="36.0" promptText="g" unFocusColor="#0e9654">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </JFXTextField>
-                                                <JFXRadioButton fx:id="algo2" text="Algorithme2" toggleGroup="$group">
+                                                <JFXRadioButton fx:id="algoTHJ" onAction="#setTHJChart" text="THJ" toggleGroup="$group">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </JFXRadioButton>
-                                                <JFXTextField fx:id="chemin" editable="false" focusColor="#299e3a" labelFloat="true" prefHeight="25.0" prefWidth="436.0" promptText="Chemin" text="c:/" unFocusColor="#0e9654" HBox.hgrow="ALWAYS">
+                                                <JFXRadioButton fx:id="algo2" onAction="#setChart" text="Blind" toggleGroup="$group">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </JFXRadioButton>
+                                                <JFXTextField fx:id="chemin" editable="false" focusColor="#299e3a" labelFloat="true" prefHeight="25.0" prefWidth="306.0" promptText="Chemin" text="c:/" unFocusColor="#0e9654" HBox.hgrow="ALWAYS">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font></JFXTextField>
-                                                <JFXButton onAction="#openFileChooser" prefHeight="42.0" prefWidth="95.0" ripplerFill="#40476d" styleClass="open_file_icon" text="Ouvrir" />
+                                                <JFXButton onAction="#openFileChooser" prefHeight="42.0" prefWidth="97.0" ripplerFill="#40476d" styleClass="open_file_icon" text="Ouvrir" />
                                              </children>
                                           </HBox>
                                           <HBox fx:id="nbrClassDetecter" prefHeight="38.0" prefWidth="838.0" spacing="17.0">
@@ -117,19 +129,19 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXSlider fx:id="nombreClusterDiabete" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" HBox.hgrow="ALWAYS" />
+                                                <JFXSlider fx:id="nombreClusterDiabete" blockIncrement="1.0" majorTickUnit="1.0" max="10.0" min="2.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" HBox.hgrow="ALWAYS" />
                                              </children>
                                              <VBox.margin>
                                                 <Insets />
                                              </VBox.margin>
                                              <padding>
-                                                <Insets left="34.0" right="35.0" />
+                                                <Insets left="15.0" right="5.0" />
                                              </padding>
                                           </HBox>
                                           <HBox fx:id="mapDiabete" prefHeight="261.0" prefWidth="838.0" spacing="10.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <HBox fx:id="csvMaps" prefHeight="217.0" prefWidth="479.0" HBox.hgrow="ALWAYS" />
-                                                <VBox alignment="CENTER" prefHeight="217.0" prefWidth="378.0" spacing="2.0" style="-fx-background-color: #303030;" HBox.hgrow="ALWAYS">
+                                                <VBox fx:id="tableContainer" alignment="CENTER" prefHeight="217.0" prefWidth="378.0" spacing="2.0" style="-fx-background-color: #303030;" HBox.hgrow="ALWAYS">
                                                    <children>
                                                       <TableView fx:id="popTable" prefHeight="213.0" prefWidth="364.0" VBox.vgrow="ALWAYS">
                                                         <columns>

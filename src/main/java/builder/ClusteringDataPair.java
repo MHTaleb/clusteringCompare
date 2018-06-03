@@ -13,36 +13,36 @@ import java.util.List;
  */
 public class ClusteringDataPair {
 
-    private String column;
-    private List<Line> points;
+    private String columnName;
+    private List<Line> columnPoints;
 
     public ClusteringDataPair() {
     }
 
     public ClusteringDataPair(String column, List<Line> points) {
-        this.column = column;
-        this.points = points;
+        this.columnName = column;
+        this.columnPoints = points;
     }
 
-    public String getColumn() {
-        return column;
+    public String getColumnName() {
+        return columnName;
     }
 
-    public List<Line> getPoints() {
-        return points;
+    public List<Line> getColumnPoints() {
+        return columnPoints;
     }
 
-    public void setColumn(String column) {
-        this.column = column;
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
     }
 
-    public void setPoints(List<Line> points) {
-        this.points = points;
+    public void setColumnPoints(List<Line> columnPoints) {
+        this.columnPoints = columnPoints;
     }
 
     @Override
     public String toString() {
-        return "\nClusteringDataPair{" + "\ncolumn=" + column + ",\n points=" + points + "\n}";
+        return "\nClusteringDataPair{" + "\ncolumn=" + columnName + ",\n points=" + columnPoints + "\n}";
     }
     
     

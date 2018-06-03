@@ -23,15 +23,15 @@ public class ChaouchAlgorithm {
 
         this.matriceCSV = new ArrayList<>();
 
-        int nombreDeLigne = clusteringDataPairs.get(0).getPoints().size();
+        int nombreDeLigne = clusteringDataPairs.get(0).getColumnPoints().size();
         int nombreDeCollone = clusteringDataPairs.size();
 
         for (int i = 0; i < nombreDeLigne; i++) {
             List<Float> line = new ArrayList<>();
             for (int j = 0; j < nombreDeCollone; j++) {
                 final ClusteringDataPair column = clusteringDataPairs.get(j);
-                if (!column.getColumn().trim().toLowerCase().equals("class")) {
-                    Float value = column.getPoints().get(i).getValue();
+                if (!column.getColumnName().trim().toLowerCase().equals("class")) {
+                    Float value = column.getColumnPoints().get(i).getValue();
                     line.add(value);
                 }
             }
@@ -40,7 +40,7 @@ public class ChaouchAlgorithm {
             }
         }
 
-        classes = new ArrayList<>(clusteringDataPairs.get(0).getPoints().size());
+        classes = new ArrayList<>(clusteringDataPairs.get(0).getColumnPoints().size());
     }
     List<List<Float>> currentCentroid;
 

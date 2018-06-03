@@ -21,45 +21,48 @@ import java.util.function.Predicate;
  */
 class PFEDataFormator {
 
-    private HashMap<Integer, List> members;
-    private final HashMap<Integer, List> previousMembers;
-    private final HashMap<Integer, List> wellClassedMembers;
+    private HashMap<Integer, List> classifications;
+    private final HashMap<Integer, List> classificationBenchMark;
+    private final HashMap<Integer, List> biensClassifiee;
     
 
-    public HashMap<Integer, List> getPreviousMembers() {
-        return previousMembers;
+    public HashMap<Integer, List> getClassificationBenchMark() {
+        return classificationBenchMark;
     }
 
-    public HashMap<Integer, List> getWellClassedMembers() {
-        return wellClassedMembers;
+    public HashMap<Integer, List> getBiensClassifiee() {
+        return biensClassifiee;
     }
-     
+    /**
+     * permet de presenter les donner d une facon bcp plus simple est etulisable dans l interface graphique
+     * @param pairResults elle exige le resultat du lancement de notre algorithme 
+     */ 
     PFEDataFormator(List<GameTheoryResolver.PairResult> pairResults) {
-        members = new HashMap<>();
-        previousMembers = new HashMap<>();
-        wellClassedMembers = new HashMap<>();
+        classifications = new HashMap<>();
+        classificationBenchMark = new HashMap<>();
+        biensClassifiee = new HashMap<>();
         pairResults.stream().forEach(pair->{
             
             int detectedCluster = pair.getDetectedCluster();
-            boolean containsKey = members.containsKey(detectedCluster);
+            boolean containsKey = classifications.containsKey(detectedCluster);
             if(!containsKey){
-                members.put(detectedCluster, new ArrayList());
+                classifications.put(detectedCluster, new ArrayList());
             }
-            members.get(detectedCluster).add(pair.getNodeLabel());
+            classifications.get(detectedCluster).add(pair.getNodeLabel());
                 });
-        System.out.println("membres"+members);
+        System.out.println("membres"+classifications);
         response = new StringBuilder();
     }
 
     private final StringBuilder response ;
 
-    public HashMap<Integer, List> getMembers() {
-        return members;
+    public HashMap<Integer, List> getClassifications() {
+        return classifications;
     }
     
     @Override
     public String toString() {
-        final Set<Map.Entry<Integer, List>> entrySet = members.entrySet();
+        final Set<Map.Entry<Integer, List>> entrySet = classifications.entrySet();
         entrySet.stream().forEach(cnsmr->{
         response.append("cluster ").append(cnsmr.getKey()).append("members size = ").append(cnsmr.getValue().size()).append("\n").append(cnsmr.getValue()).append(" \n");
                 });
@@ -68,31 +71,31 @@ class PFEDataFormator {
 
     void setClassData(List<ClusteringDataPair> clusteringDataPairs) {
         Predicate<? super ClusteringDataPair> selectClass = cdp -> {
-          return cdp.getColumn().trim().toLowerCase().equals("class");
+          return cdp.getColumnName().trim().toLowerCase().equals("class");
         };
         clusteringDataPairs.stream().filter(selectClass).forEach(dataList->{
-            final List<Line> points = dataList.getPoints();
+            final List<Line> points = dataList.getColumnPoints();
             points.stream().forEach(point->{
                 Float clusterIndex = point.getValue();
-                if(!previousMembers.containsKey(clusterIndex.intValue())){
-                    previousMembers.put(clusterIndex.intValue(), new ArrayList());
-                    wellClassedMembers.put(clusterIndex.intValue(), new ArrayList());
+                if(!classificationBenchMark.containsKey(clusterIndex.intValue())){
+                    classificationBenchMark.put(clusterIndex.intValue(), new ArrayList());
+                    biensClassifiee.put(clusterIndex.intValue(), new ArrayList());
                 }
-                previousMembers.get(clusterIndex.intValue()).add("node"+(point.getIndex()));
+                classificationBenchMark.get(clusterIndex.intValue()).add("node"+(point.getIndex()));
             });
-            System.out.println("previous \n"+previousMembers);
+            System.out.println("previous \n"+classificationBenchMark);
             
-            previousMembers.forEach((index,mmbrs)->{
+            classificationBenchMark.forEach((index,mmbrs)->{
                 mmbrs.forEach(member->{
                     try {
                         
-                        if(members.get(index).contains(member))wellClassedMembers.get(index).add(member);
+                        if(classifications.get(index).contains(member))biensClassifiee.get(index).add(member);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 });
             });
-            System.out.println("wellclassed \n"+wellClassedMembers);
+            System.out.println("wellclassed \n"+biensClassifiee);
         });
     }
     
