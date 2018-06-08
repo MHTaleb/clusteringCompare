@@ -5,12 +5,15 @@
  */
 package algorithme;
 
+import dz.talcorp.clustering.PFEDataFormator;
 import entity.ClusterPoint;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -20,10 +23,12 @@ import java.util.function.Consumer;
  */
 public class GameTheoryResolver {
 
+    private List<List<Float>> matriceCSV;
+    
     private List<KmeansResolver> kmeanResults;
 
     private List<PairResult> pairResults;
-    private String i;
+   
 
     public GameTheoryResolver() {
     }
@@ -33,10 +38,10 @@ public class GameTheoryResolver {
      * 
      * @param kmeanResults liste de simulations
      */
-    public GameTheoryResolver(List<KmeansResolver> kmeanResults) {
+    public GameTheoryResolver(List<KmeansResolver> kmeanResults,List<List<Float>> matriceCSV) {
         this.kmeanResults = new ArrayList<>(kmeanResults);
         pairResults = new ArrayList<>();
-
+        this.matriceCSV = matriceCSV;
         resolve();
     }
 
@@ -67,6 +72,7 @@ public class GameTheoryResolver {
         
     }
 
+    
     public class PairResult {
 
         private String nodeLabel;

@@ -31,13 +31,15 @@ public class Player {
         distancesIntraCluster = new ArrayList();
     }
 
-    public long calculerDistancePoint(List<Float> coordinates) {
+    public double calculerDistancePoint(List<Float> coordinates) {
+       
         long distance = 0;
         int diviseur = 0;
         for (int i = 0; i < coordinates.size(); i++) {
             distance += Math.pow(Math.abs(coordinates.get(i) - attributes.get(i)), 2);
             diviseur++;
         }
+        if(diviseur == 0)diviseur =1;
         return distance / diviseur;
     }
 
@@ -77,9 +79,7 @@ public class Player {
         return winnerIndex;
     }
 
-    void inscrire(Collection<Cluster> clusters, double FACTOR) {
-     
-    }
+  
 
     public void setAttributes(List<Float> attributes) {
         this.attributes = attributes;

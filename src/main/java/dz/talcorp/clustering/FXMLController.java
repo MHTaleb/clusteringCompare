@@ -9,6 +9,7 @@ import algorithme.THJAlgorithm;
 import builder.CSVPointBuilder;
 import builder.ClusteringDataPair;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.controls.JFXRadioButton;
@@ -29,6 +30,10 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -67,6 +72,9 @@ public class FXMLController implements Initializable {
     private TableColumn<TableClusterElement, String> membreApres;
 
     @FXML
+    private JFXTextField SeuilField;
+    
+    @FXML
     private HBox csvMaps;
 
     @FXML
@@ -84,7 +92,6 @@ public class FXMLController implements Initializable {
     @FXML
     private JFXSlider nombreClusterDiabete;
 
-    @FXML
     private JFXDrawer drawer;
 
     @FXML
@@ -103,6 +110,7 @@ public class FXMLController implements Initializable {
     private ScatterChart<Number, Number> chartCSVBruit;
 
     private LineChart<Number, Number> kItereChart;
+    String title;
 
     //--- fin declaration graphe
     //--- declaration liste observable de la table des resultat
@@ -118,7 +126,7 @@ public class FXMLController implements Initializable {
     @FXML
     private ToggleGroup group;
     @FXML
-    private JFXTextField gValue;
+    private JFXComboBox<DistanceCBD> gValue;
     @FXML
     private JFXRadioButton algoTHJ;
     @FXML
@@ -127,9 +135,16 @@ public class FXMLController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        initializeDrawer();
         initializeChart();
         initializeTable();
+
+        gValue.getItems().add(new DistanceCBD("Manhattan", 1));
+        gValue.getItems().add(new DistanceCBD("Euclidean", 2));
+        gValue.getItems().add(new DistanceCBD("p-norme3", 3));
+        gValue.getItems().add(new DistanceCBD("p-norme4", 4));
+        gValue.getItems().add(new DistanceCBD("p-norme5", 5));
+        gValue.getItems().add(new DistanceCBD("Chebyshev - 25", 25));
+        gValue.getItems().add(new DistanceCBD("Chebyshev - 50", 50));
 
         // lier l etat de visibilité du text field contenant le G a l etat du cochage 
         gValue.disableProperty().bind(algo1.selectedProperty().not());
@@ -179,7 +194,7 @@ public class FXMLController implements Initializable {
 //                System.out.println(seriesMembre);
 
                 selectedChart.getData().add(seriesMembre);
-               // selectedChart.getData().add(seriesCentre);
+                // selectedChart.getData().add(seriesCentre);
                 i++;
 
             }
@@ -217,38 +232,6 @@ public class FXMLController implements Initializable {
         });
     }
 
-    private void initializeDrawer() {
-
-        try {
-            VBox menu = FXMLLoader.load(getClass().getResource("/fxml/Menu.fxml"));
-            menu.setPrefWidth(0);
-            ((VBox) menu.getChildren().get(0)).setPrefWidth(0);
-            drawer.setSidePane(menu);
-            drawer.setPrefWidth(0);
-            HamburgerBackArrowBasicTransition transaction = new HamburgerBackArrowBasicTransition(hamburger);
-            transaction.setRate(-1);
-            hamburger.addEventHandler(MouseEvent.MOUSE_RELEASED, ect -> {
-                transaction.setRate(transaction.getRate() * -1);
-                transaction.play();
-                if (drawer.isHidden() || drawer.isHiding()) {
-                    menu.setPrefWidth(150);
-                    ((VBox) menu.getChildren().get(0)).setPrefWidth(150);
-                    drawer.setPrefWidth(150);
-                    drawer.open();
-                } else {
-                    drawer.close();
-                    drawer.setPrefWidth(0);
-                    menu.setPrefWidth(0);
-                    ((VBox) menu.getChildren().get(0)).setPrefWidth(0);
-                }
-            });
-
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }
-
     private void initialzeThjChart() {
 
         csvMaps.getChildren().remove(kItereChart);
@@ -256,21 +239,19 @@ public class FXMLController implements Initializable {
         csvMaps.getChildren().remove(chartCSV);
         csvMaps.getChildren().remove(chartCSVBruit);
         mapDiabete.getChildren().remove(tableContainer);
-        
-       
-        
+
         NumberAxis axisX = new NumberAxis(-500, 500, 10);
         NumberAxis axisY = new NumberAxis(-500, 500, 10);
 
         axisX.setAutoRanging(true);
-        axisX.setLabel("X");
+        axisX.setLabel("Nombre Cluster ");
         axisX.setForceZeroInRange(false);
         axisY.setAutoRanging(true);
-        axisY.setLabel("Y");
+        axisY.setLabel("Taux");
         axisY.setForceZeroInRange(false);
 
         kItereChart = new LineChart<>(axisX, axisY);
-        kItereChart.setTitle("Graphe de THJ pour K=2 --> 10");
+        kItereChart.setTitle("Graphe des WB de l algorithm THJ");
 
         kItereChart.autosize();
         kItereChart.prefWidthProperty().bind(csvMaps.widthProperty());
@@ -293,6 +274,23 @@ public class FXMLController implements Initializable {
         chartCSV.prefWidthProperty().bind(csvMaps.widthProperty());
         chartCSV.prefHeightProperty().bind(csvMaps.heightProperty());
         csvMaps.getChildren().add(chartCSV);
+
+        axisX = new NumberAxis(-500, 500, 10);
+        axisY = new NumberAxis(-500, 500, 10);
+
+        axisX.setAutoRanging(true);
+        axisX.setLabel("X");
+        axisX.setForceZeroInRange(false);
+        axisY.setAutoRanging(true);
+        axisY.setLabel("Y");
+        axisY.setForceZeroInRange(false);
+
+        chartCSVInitial = new ScatterChart<>(axisX, axisY);
+        chartCSVInitial.setTitle("clustering initial");
+        chartCSVInitial.autosize();
+        chartCSVInitial.prefWidthProperty().bind(csvMaps.widthProperty());
+        chartCSVInitial.prefHeightProperty().bind(csvMaps.heightProperty());
+        csvMaps.getChildren().add(chartCSVInitial);
     }
 
     private void initializeChart() {
@@ -375,7 +373,7 @@ public class FXMLController implements Initializable {
         //--------------   fin initalisation graphe resultat initial clustering   --------------
 
         try {
-            
+
             mapDiabete.getChildren().add(tableContainer);
         } catch (Exception e) {
         }
@@ -431,10 +429,11 @@ public class FXMLController implements Initializable {
         }
 
     }
+    String tit1e;
 
     public void algoChaouech(List<ClusteringDataPair> listeDesAttribusAvecValeur, final int PARAM_AFFICHAGE_1, final int PARAM_AFFICHAGE_2) throws NumberFormatException {
         ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
-        algorithm.resolve((int) nombreClusterDiabete.getValue(), Integer.parseInt(gValue.getText().trim()));
+        algorithm.resolve((int) nombreClusterDiabete.getValue(), gValue.getSelectionModel().getSelectedItem().getDistanceValue());
         System.out.println("algorithme " + algorithm);
 
         tableStudyResultList.clear();
@@ -484,7 +483,7 @@ public class FXMLController implements Initializable {
         chartCSV.dataProperty().get().clear();
         chartCSVBruit.dataProperty().get().clear();
         for (int i = 0; i < nombreClusterDiabete.getValue(); i++) {
-
+//------------------------
             final ObservableList<XYChart.Data<Number, Number>> observableArrayList = FXCollections.observableArrayList();
 
             for (int j = 0; j < centersPrevious.size(); j++) {
@@ -500,7 +499,7 @@ public class FXMLController implements Initializable {
             final XYChart.Series<Number, Number> series = new XYChart.Series<>(observableArrayList);
             series.setName("class" + i);
             chartCSV.dataProperty().get().add(series);
-
+//-----------------------------------
             final ObservableList<XYChart.Data<Number, Number>> observableArrayListBruit = FXCollections.observableArrayList();
 
             for (int j = 0; j < centersPrevious.size(); j++) {
@@ -556,8 +555,8 @@ public class FXMLController implements Initializable {
             }
         });
         System.out.println("simulation  is done");
-
-        GameTheoryResolver gameTheoryResolver = new GameTheoryResolver(simulations);
+        ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+        GameTheoryResolver gameTheoryResolver = new GameTheoryResolver(simulations, algorithm.getMatriceCSV());
 
         // preparé une classe qui va organiser les resultats
         PFEDataFormator pfeDataFormator = new PFEDataFormator(gameTheoryResolver.getPairResults());
@@ -652,21 +651,20 @@ public class FXMLController implements Initializable {
 
     }
 
-    @FXML
-    private void showDistance(KeyEvent event) {
-    }
-
     private void algorithmTHJ(List<ClusteringDataPair> listeDesAttribusAvecValeur, int valeurG, int PARAM_AFFICHAGE_1, int PARAM_AFFICHAGE_2) {
+        tit1e = "THJ";
         List<THJAlgorithm> tHJAlgorithms = new ArrayList<>();
-        for (int k = 2; k < 10; k++) {
-            ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
-            THJAlgorithm thja = new THJAlgorithm(algorithm.getMatriceCSV());
+
+        ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+        for (int k = 2; k < 11; k++) {
+            THJAlgorithm thja = new THJAlgorithm(algorithm.getMatriceCSV(), Integer.parseInt(SeuilField.getText()) );
             thja.resolve(k);
             tHJAlgorithms.add(thja);
 
             System.out.println("best wb for " + k + " is : " + thja.getBestWB());
             System.out.println("best composition for " + k + " is : " + thja.getBestMap().values());
         }
+
         int index = 0;
         double best_k = Double.MAX_VALUE;
         for (int i = 0; i < tHJAlgorithms.size(); i++) {
@@ -681,30 +679,89 @@ public class FXMLController implements Initializable {
         Hashtable<Integer, Cluster> bestMap = elu.getBestMap();
         List<ClusterPoint> centroids = new ArrayList<>();
         List<ClusterPoint> points = new ArrayList<>();
-        int i =0;
-        System.out.println("best map size = "+bestMap.size());
-        for(int j = 0 ; j<bestMap.size() ; j++) {
-            
+        int i = 0;
+        System.out.println("best map size = " + bestMap.size());
+        for (int j = 0; j < bestMap.size(); j++) {
+
             Cluster cluster = bestMap.get(j);
-            System.out.println("cluster members size = "+cluster.getPlayers().size());
+            System.out.println("cluster members size = " + cluster.getPlayers().size());
             List<Float> clusterCoordinates = cluster.getClusterCoordinates();
-            centroids.add(new ClusterPoint(clusterCoordinates.get(PARAM_AFFICHAGE_1),clusterCoordinates.get(PARAM_AFFICHAGE_2)));
-            for ( Player player :cluster.getPlayers() ){
-                final ClusterPoint playerPoint = new ClusterPoint(player.getAttributes().get(PARAM_AFFICHAGE_1),player.getAttributes().get(PARAM_AFFICHAGE_2));
+            centroids.add(new ClusterPoint(clusterCoordinates.get(PARAM_AFFICHAGE_1), clusterCoordinates.get(PARAM_AFFICHAGE_2)));
+            for (Player player : cluster.getPlayers()) {
+                final ClusterPoint playerPoint = new ClusterPoint(player.getAttributes().get(PARAM_AFFICHAGE_1), player.getAttributes().get(PARAM_AFFICHAGE_2));
                 playerPoint.setCurrentCluster(i);
                 points.add(playerPoint);
             }
             i++;
         }
-        
+
+        title = "kmeans";
         kItereChart.getData().clear();
         final XYChart.Series series = new XYChart.Series();
+        series.setName("Theorie des jeu");
         tHJAlgorithms.stream().forEach(experiance -> {
-            series.getData().add(new XYChart.Data(series.getData().size()+2, experiance.getBestWB()));
+            series.getData().add(new XYChart.Data(series.getData().size() + 2, experiance.getBestWB()));
         });
-        kItereChart.getData().add(series );
-        
+        kItereChart.getData().add(series);
+
         drawChart(elu.getIteration(), centroids, points, chartCSV);
+
+        List<ChaouchAlgorithm> cas = new ArrayList<>();
+        for (int k = 2; k < 11; k++) {
+            ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+            ca.resolve(k, 2);
+            cas.add(ca);
+        }
+
+        int indexCA = 0;
+        double best_kCA = Double.MAX_VALUE;
+        for (int j = 0; j < cas.size(); j++) {
+            ChaouchAlgorithm ca = cas.get(j);
+            double bestWB = ca.getWB();
+            if (best_kCA > bestWB) {
+                indexCA = j;
+                best_kCA = bestWB;
+            }
+        }
+        ChaouchAlgorithm eluCA = cas.get(indexCA);
+
+        Predicate<? super ClusteringDataPair> classFilter = cdp -> {
+            return cdp.getColumnName().toLowerCase().trim().equals("class");
+        };
+
+        ClusteringDataPair classColumnAlgo2 = listeDesAttribusAvecValeur.stream().filter(classFilter).findFirst().get();
+        final List<Integer> centersPrevious = new ArrayList();
+
+        classColumnAlgo2.getColumnPoints().stream().forEach(center -> {
+            centersPrevious.add(center.getValue().intValue());
+        });
+
+        List<Integer> classesAlgorithme = eluCA.getClasses();
+        chartCSVInitial.dataProperty().get().clear();
+        for (int l = 0; l < indexCA + 2; l++) {
+
+            final ObservableList<XYChart.Data<Number, Number>> observableArrayList = FXCollections.observableArrayList();
+
+            for (int j = 0; j < centersPrevious.size(); j++) {
+                //if (Objects.equals(centersPrevious.get(j), classesAlgorithme.get(j)) && centersPrevious.get(j) == i) {
+                if (classesAlgorithme.get(j) == l) {
+                    final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1).getColumnPoints().get(j).getValue();
+                    final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2).getColumnPoints().get(j).getValue();
+                    System.out.println("x = " + x + "   y = " + y + "  clust");
+                    observableArrayList.add(new XYChart.Data<>(Double.valueOf(x), Double.valueOf(y)));
+                }
+            }
+
+            final XYChart.Series<Number, Number> caSerieDraw = new XYChart.Series<>(observableArrayList);
+            caSerieDraw.setName("class" + l);
+            chartCSVInitial.dataProperty().get().add(caSerieDraw);
+        }
+        final XYChart.Series seriesCAK = new XYChart.Series();
+        seriesCAK.setName("Kmeans");
+        cas.stream().forEach(experiance -> {
+            seriesCAK.getData().add(new XYChart.Data(seriesCAK.getData().size() + 2, experiance.getWB()));
+        });
+        kItereChart.getData().add(seriesCAK);
 
     }
 
@@ -716,6 +773,47 @@ public class FXMLController implements Initializable {
     @FXML
     private void setTHJChart(ActionEvent event) {
         initialzeThjChart();
+    }
+
+    private static class DistanceCBD {
+
+        private final StringProperty distanceName = new SimpleStringProperty();
+        private final IntegerProperty distanceValue = new SimpleIntegerProperty();
+
+        public int getDistanceValue() {
+            return distanceValue.get();
+        }
+
+        public void setDistanceValue(int value) {
+            distanceValue.set(value);
+        }
+
+        public IntegerProperty distanceValueProperty() {
+            return distanceValue;
+        }
+
+        public String getDistanceName() {
+            return distanceName.get();
+        }
+
+        public void setDistanceName(String value) {
+            distanceName.set(value);
+        }
+
+        public StringProperty distanceNameProperty() {
+            return distanceName;
+        }
+
+        public DistanceCBD(String distanceName, int value) {
+            this.distanceName.setValue(distanceName);
+            distanceValue.setValue(value);
+        }
+
+        @Override
+        public String toString() {
+            return distanceName.getValue();
+        }
+
     }
 
 }

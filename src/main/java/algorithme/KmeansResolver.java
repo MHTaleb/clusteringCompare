@@ -163,5 +163,60 @@ public class KmeansResolver {
     public int getNumOfRepeat() {
         return numOfRepeat;
     }
+    public float getWB(){
+        float wb = 0 ;
+        int TAILLE_CLUSTER = CENTROIDS.size();
+        //ssw
+        double ssw = 0 ;
+        for(int i = 0 ; i<TAILLE_CLUSTER ; i++){
+            ClusterPoint cpi = CENTROIDS.get(i);
+            for(int j = 0 ; j<POINTS.size();j++){
+                if(POINTS.get(j).getCurrentCluster() == i){
+                    ClusterPoint xi = POINTS.get(j);
+                    ssw+=minus(xi,cpi);
+                }
+            }
+        }
+        //x_
+        ClusterPoint x_ = new ClusterPoint(0,0);
+        for (int i = 0; i < POINTS.size(); i++) {
+             x_.setX(x_.getX() + POINTS.get(i).getX());
+             x_.setY(x_.getY() + POINTS.get(i).getY());
+        }
+        x_.setX(x_.getX() / POINTS.size());
+        x_.setY(x_.getY() / POINTS.size());
+        //ssb
+        float ssb = 0;
+        for (int i = 0; i < CENTROIDS.size(); i++) {
+            ClusterPoint ci = CENTROIDS.get(i);
+            Predicate<? super ClusterPoint> inCluster = new InClusterPredicate(i);
+            long ni = POINTS.stream().filter(inCluster).count();
+            ssb+=ni*minus(ci, x_);
+        }
+        wb = (float) (CENTROIDS.size() * ssw / ssb) ;
+        return wb;
+    }
+
+    private float minus(ClusterPoint xi, ClusterPoint cpi) {
+        float distance = 0;
+        final double x_abs = Math.abs(xi.getX() - cpi.getX());
+        final double y_abs = Math.abs(xi.getY() - cpi.getY());
+        distance = (float) (x_abs*x_abs+y_abs*y_abs);
+       return distance;
+    }
+
+    private static class InClusterPredicate implements Predicate<ClusterPoint> {
+
+        private final int i;
+
+        public InClusterPredicate(int i) {
+            this.i = i;
+        }
+
+        @Override
+        public boolean test(ClusterPoint t) {
+            return t.getCurrentCluster() == i;
+        }
+    }
 
 }

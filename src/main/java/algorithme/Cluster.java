@@ -18,16 +18,16 @@ public class Cluster {
     final private List<Player> vitrine;
     private List<Player> players;
     private List<Float> clusterCoordinates;
-    private final double FACTOR;
+  
 
     public Cluster(float factor) {
         players = new ArrayList();
-        this.FACTOR = factor;
+ 
         this.vitrine = new ArrayList();
     }
 
-    public Cluster(List<Float> clusterCoordinate, double factor) {
-        this.FACTOR = factor;
+    public Cluster(List<Float> clusterCoordinate) {
+       
         this.clusterCoordinates = clusterCoordinate;
         this.vitrine = new ArrayList();
     }
@@ -58,7 +58,7 @@ public class Cluster {
     public void updateCentroid() {
         this.clusterCoordinates = new ArrayList();
  
-        for(int i = 0 ; i< players.get(0).getAttributes().size();i++){
+        if( players.size()>0)for(int i = 0 ; i< players.get(0).getAttributes().size();i++){
             float att = 0;
             for(int j=0 ; j<players.size();j++){
                 att+=players.get(j).getAttributes().get(i);
@@ -86,16 +86,30 @@ public class Cluster {
         
     }
 
-    public Cluster(List<Player> vitrine, List<Player> players, List<Float> clusterCoordinates, double FACTOR) {
+    public Cluster(List<Player> vitrine, List<Player> players, List<Float> clusterCoordinates) {
         this.vitrine = vitrine;
         this.players = players;
         this.clusterCoordinates = clusterCoordinates;
-        this.FACTOR = FACTOR;
+
     }
 
     @Override
     public String toString() {
         return "\n"+this.players;
+    }
+
+    public List<Player> getPlayerBeyondLimit(int seuil) {
+        List<Player> corbeil_players = new ArrayList();
+        for (int i = 0; i < players.size(); i++) {
+            Player curent_player = players.get(i);
+            double calculerDistancePoint = curent_player.calculerDistancePoint(clusterCoordinates);
+           // System.out.println("calculerDistancePoint :::::::"+calculerDistancePoint);
+            if(calculerDistancePoint > seuil){
+                corbeil_players.add(curent_player);
+                players.remove(curent_player);
+            }
+        }
+        return corbeil_players;
     }
 
   

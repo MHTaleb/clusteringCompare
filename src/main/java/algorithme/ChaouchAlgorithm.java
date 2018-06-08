@@ -117,7 +117,7 @@ public class ChaouchAlgorithm {
     private float getDistance(List<Float> element, List<Float> center, int g) {
         float sum = 0;
         for (int i = 0; i < element.size(); i++) {
-            sum += Math.pow(Math.sqrt(Math.pow(element.get(i) - center.get(i), 2)),g);
+            sum += Math.pow(Math.sqrt(Math.pow(element.get(i) - center.get(i), 2)), g);
         }
         return (float) Math.sqrt(sum);
     }
@@ -146,13 +146,60 @@ public class ChaouchAlgorithm {
     public List<List<Float>> getMatriceCSV() {
         return matriceCSV;
     }
-    
-    
+
+    public double getWB() {
+        double wb = 0;
+        //ssw
+        double ssw = 0;
+        for (int i = 0; i < classes.size(); i++) {
+            List<Float> xi = matriceCSV.get(i);
+            List<Float> ci = currentCentroid.get(classes.get(i));
+            ssw += minus(xi, ci);
+        }
+        //x_
+        List<Float> x_ = new ArrayList<>();
+        //init
+        for (int i = 0; i < matriceCSV.get(0).size(); i++) {
+            x_.add(Float.valueOf(0));
+        }
+        for (int i = 0; i < matriceCSV.size(); i++) {
+            List<Float> xi = matriceCSV.get(i);
+            for (int j = 0; j < xi.size(); j++) {
+                x_.set(j, x_.get(j) + xi.get(j));
+            }
+        }
+        for (int i = 0; i < x_.size(); i++) {
+            x_.set(i, x_.get(i) / matriceCSV.size());
+        }
+        //ssb
+        double ssb = 0;
+        for (int i = 0; i < currentCentroid.size(); i++) {
+            //ni de ci
+            int ni = 0;
+            for (int j = 0; j < classes.size(); j++) {
+                if (classes.get(j) == i) {
+                    ni++;
+                }
+            }
+
+            List<Float> ci = currentCentroid.get(i);
+            ssb += ni * minus(ci, x_);
+        }
+        wb = currentCentroid.size() * ssw / ssb;
+        return wb;
+    }
 
     @Override
     public String toString() {
         return "ChaouchAlgorithm{" + "classes=" + classes + "\n, matriceCSV=" + matriceCSV + "\n, currentCentroid=" + currentCentroid + '}';
     }
 
+    private double minus(List<Float> xi, List<Float> ci) {
+        double sw = 0;
+        for (int i = 0; i < xi.size(); i++) {
+            sw += Math.pow(Math.abs(xi.get(i) - ci.get(i)), 2);
+        }
+        return sw;
+    }
 
 }

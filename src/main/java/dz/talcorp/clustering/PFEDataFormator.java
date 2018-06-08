@@ -19,14 +19,14 @@ import java.util.function.Predicate;
  *
  * @author taleb
  */
-class PFEDataFormator {
+public class PFEDataFormator {
 
     private HashMap<Integer, List> classifications;
-    private final HashMap<Integer, List> classificationBenchMark;
+    private final HashMap<Integer, List<String>> classificationBenchMark;
     private final HashMap<Integer, List> biensClassifiee;
     
 
-    public HashMap<Integer, List> getClassificationBenchMark() {
+    public HashMap<Integer, List<String>> getClassificationBenchMark() {
         return classificationBenchMark;
     }
 
@@ -37,7 +37,7 @@ class PFEDataFormator {
      * permet de presenter les donner d une facon bcp plus simple est etulisable dans l interface graphique
      * @param pairResults elle exige le resultat du lancement de notre algorithme 
      */ 
-    PFEDataFormator(List<GameTheoryResolver.PairResult> pairResults) {
+    public PFEDataFormator(List<GameTheoryResolver.PairResult> pairResults) {
         classifications = new HashMap<>();
         classificationBenchMark = new HashMap<>();
         biensClassifiee = new HashMap<>();
@@ -97,6 +97,10 @@ class PFEDataFormator {
             });
             System.out.println("wellclassed \n"+biensClassifiee);
         });
+    }
+
+    public List<Integer> getSimpleClasses() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     
