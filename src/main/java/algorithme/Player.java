@@ -15,6 +15,8 @@ import java.util.List;
  */
 public class Player {
 
+    private String name;
+
     private List<Float> attributes;
 
     private List<Float> distancesIntraCluster;
@@ -26,7 +28,8 @@ public class Player {
         }
     }
 
-    public Player(List<Float> attributes) {
+    public Player(String name,List<Float> attributes) {
+        this.name = name;
         this.attributes = attributes;
         distancesIntraCluster = new ArrayList();
     }
@@ -57,11 +60,13 @@ public class Player {
             for (Player player : clusters.get(i).getPlayers()) {
                 float distance = 0;
                 for (int j = 0; j < player.attributes.size(); j++) {
-                    distance += Math.abs(player.attributes.get(j) - this.attributes.get(j));
+                    distance += Math.pow(Math.abs(player.attributes.get(j) - this.attributes.get(j)),2);
                 }
                 distanceMoyenne += distance;
             }
-            distancesIntraCluster.add(distanceMoyenne / currentClusterSize);
+            final float capital = distanceMoyenne / currentClusterSize;
+            System.out.println(name+" capital avec "+i+" = "+capital);
+            distancesIntraCluster.add(i,capital);
         }
     }
 
@@ -76,6 +81,7 @@ public class Player {
                 winnerValue = curentDistance;
             }
         }
+        System.out.println("winner index = "+winnerIndex+" winner value = "+winnerValue+"  player = "+name);
         return winnerIndex;
     }
 

@@ -15,7 +15,6 @@ import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
-import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import entity.ClusterPoint;
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +37,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -48,11 +46,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import tools.ImageToCSVConverter;
 
 public class FXMLController implements Initializable {
 
@@ -409,8 +406,8 @@ public class FXMLController implements Initializable {
         }
 
         // choix de collone du graphe
-        final int PARAM_AFFICHAGE_1 = 1;
-        final int PARAM_AFFICHAGE_2 = 4;
+        final int PARAM_AFFICHAGE_1 = 3;
+        final int PARAM_AFFICHAGE_2 = 5;
 
         // notre algo
         if (algo2.isSelected()) {
@@ -652,12 +649,34 @@ public class FXMLController implements Initializable {
     }
 
     private void algorithmTHJ(List<ClusteringDataPair> listeDesAttribusAvecValeur, int valeurG, int PARAM_AFFICHAGE_1, int PARAM_AFFICHAGE_2) {
+        
+        
+        
+        List<ChaouchAlgorithm> cas = new ArrayList<>();
+        for (int k = 2; k < nombreClusterDiabete.getValue()+1; k++) {
+            ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+            ca.resolve(k, 2);
+            cas.add(ca);
+        }
+
+        int indexCA = 0;
+        double best_kCA = Double.MAX_VALUE;
+        for (int j = 0; j < cas.size(); j++) {
+            ChaouchAlgorithm ca = cas.get(j);
+            double bestWB = ca.getWB();
+            if (best_kCA > bestWB) {
+                indexCA = j;
+                best_kCA = bestWB;
+            }
+        }
+        
+        
         tit1e = "THJ";
         List<THJAlgorithm> tHJAlgorithms = new ArrayList<>();
 
         ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
-        for (int k = 2; k < 11; k++) {
-            THJAlgorithm thja = new THJAlgorithm(algorithm.getMatriceCSV(), Integer.parseInt(SeuilField.getText()) );
+        for (int k = 2; k < nombreClusterDiabete.getValue()+1; k++) {
+            THJAlgorithm thja = new THJAlgorithm(algorithm.getMatriceCSV(), Integer.parseInt(SeuilField.getText()) , cas.get(k-2).getWB() );
             thja.resolve(k);
             tHJAlgorithms.add(thja);
 
@@ -706,23 +725,6 @@ public class FXMLController implements Initializable {
 
         drawChart(elu.getIteration(), centroids, points, chartCSV);
 
-        List<ChaouchAlgorithm> cas = new ArrayList<>();
-        for (int k = 2; k < 11; k++) {
-            ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
-            ca.resolve(k, 2);
-            cas.add(ca);
-        }
-
-        int indexCA = 0;
-        double best_kCA = Double.MAX_VALUE;
-        for (int j = 0; j < cas.size(); j++) {
-            ChaouchAlgorithm ca = cas.get(j);
-            double bestWB = ca.getWB();
-            if (best_kCA > bestWB) {
-                indexCA = j;
-                best_kCA = bestWB;
-            }
-        }
         ChaouchAlgorithm eluCA = cas.get(indexCA);
 
         Predicate<? super ClusteringDataPair> classFilter = cdp -> {
@@ -738,7 +740,7 @@ public class FXMLController implements Initializable {
 
         List<Integer> classesAlgorithme = eluCA.getClasses();
         chartCSVInitial.dataProperty().get().clear();
-        for (int l = 0; l < indexCA + 2; l++) {
+        for (int l = 0; l < indexCA ; l++) { //+ (int) nombreClusterDiabete.getValue()
 
             final ObservableList<XYChart.Data<Number, Number>> observableArrayList = FXCollections.observableArrayList();
 
@@ -773,6 +775,11 @@ public class FXMLController implements Initializable {
     @FXML
     private void setTHJChart(ActionEvent event) {
         initialzeThjChart();
+    }
+
+    @FXML
+    private void convert(ActionEvent event) throws IOException {
+        ImageToCSVConverter.convertToCSV();
     }
 
     private static class DistanceCBD {

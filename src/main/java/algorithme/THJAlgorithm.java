@@ -8,7 +8,6 @@ package algorithme;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class THJAlgorithm {
 
-    final int seuil ;
+     int seuil ;
    // private final List<List<Float>> currentCentroid;
 
     private final List<List<Float>> matriceCSV;
@@ -33,8 +32,9 @@ public class THJAlgorithm {
     private final List<Integer> classClustering;
 
     private final Hashtable<Integer, Cluster> clusterMap;
+    private final double best_kCA;
 
-    public THJAlgorithm(List<List<Float>> matriceCSV,int seuil) {
+    public THJAlgorithm(List<List<Float>> matriceCSV,int seuil,double best_kCA) {
         //this.currentCentroid = new ArrayList();
         this.matriceCSV = matriceCSV;
         this.classClustering = new ArrayList();
@@ -43,6 +43,7 @@ public class THJAlgorithm {
         bestMap = new Hashtable<>();
         corbeil = new ArrayList<>();
         this.seuil = seuil;
+        this.best_kCA = best_kCA;
 
     }
     private int nombre_iteration;
@@ -53,7 +54,7 @@ public class THJAlgorithm {
         List<Player> players = new ArrayList<>();
         for (int i = 0; i < matriceCSV.size(); i++) {
 
-            players.add(new Player(matriceCSV.get(i)));
+            players.add(new Player("p("+i+")",matriceCSV.get(i)));
         }
 
         // choix k centre aleatoir
@@ -92,7 +93,21 @@ public class THJAlgorithm {
         bestWB = Double.MAX_VALUE;
         bestMap = new Hashtable<>();
         boolean state = true;
-        for (int iteration = 0; iteration < 50 && state; iteration++) {
+        for (int iteration = 0; iteration < 120 && state; iteration++) {
+
+
+            //vider la corbeil
+            for (int i = 0; i < corbeil.size(); i++) {
+                Player candidat_retour = corbeil.get(i);
+                candidat_retour.calculerDistanceIntraCluster(new ArrayList<>(clusterMap.values()));
+                int calculerIndexMeilleurCluster = candidat_retour.calculerIndexMeilleurCluster();
+                Cluster selectedCluster = clusterMap.get(calculerIndexMeilleurCluster);
+                if(candidat_retour.calculerDistancePoint(selectedCluster.getClusterCoordinates())<seuil*1.1){
+                    selectedCluster.getPlayers().add(candidat_retour);
+                    corbeil.remove(candidat_retour);
+                }
+            }
+
             System.out.println(" clusterMap.size() -->" + clusterMap.size());
             // calculer lambda pour tout les clusters par joueur
             for (int l = 0; l < clusterMap.size(); l++) {
@@ -113,12 +128,13 @@ public class THJAlgorithm {
                 for (int j = 0; j < cluster.getPlayers().size(); j++) {
                     Player player = cluster.getPlayers().get(j);
 
-                    final int calculerIndexMeilleurCluster = player.calculerIndexMeilleurCluster() % k;
+                    final int calculerIndexMeilleurCluster = player.calculerIndexMeilleurCluster() ;
                     //System.out.println("calculerIndexMeilleurCluster    " + calculerIndexMeilleurCluster);
                     final List<Player> clusterMembers = clusterMap.get(calculerIndexMeilleurCluster).getPlayers();
                     //System.out.println(player + " ----- " + clusterMembers.size());
                     cluster.getPlayers().remove(player);
                     clusterMembers.add(player);
+                    clusterMap.get(calculerIndexMeilleurCluster).setPlayers(clusterMembers);
 
                 }
             }
@@ -142,17 +158,7 @@ public class THJAlgorithm {
                 corbeil.addAll(playerBeyondLimit);
                 cluster_courant.updateCentroid();
             }
-            //vider la corbeil
-            for (int i = 0; i < corbeil.size(); i++) {
-                Player candidat_retour = corbeil.get(i);
-                candidat_retour.calculerDistanceIntraCluster(new ArrayList<>(clusterMap.values()));
-                int calculerIndexMeilleurCluster = candidat_retour.calculerIndexMeilleurCluster();
-                Cluster selectedCluster = clusterMap.get(calculerIndexMeilleurCluster);
-                if(candidat_retour.calculerDistancePoint(selectedCluster.getClusterCoordinates())<seuil){
-                    selectedCluster.getPlayers().add(candidat_retour);
-                    corbeil.remove(candidat_retour);
-                }
-            }
+
             for (int i = 0; i < clusterMap.size(); i++) {
                 Cluster cluster = clusterMap.get(i);
                 try {
@@ -213,13 +219,16 @@ public class THJAlgorithm {
                         //  System.out.println("\n members iteration 2   " + set.getValue());
                     });
                 }
-                if ((int) (wb * 1000000) == (int) (bestWB)) {
+                if ((int) (wb * 10) == (int) (bestWB * 10) && (bestWB < best_kCA)) {
                     state = false;
                 }
 
             }
             nombre_iteration = iteration;
-
+            if (wb > best_kCA) {
+                seuil-=75;
+                System.out.println("nouveau seuil "+seuil);
+            }
         }
 
         System.out.println("Best is " + bestWB);

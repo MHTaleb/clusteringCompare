@@ -32,6 +32,11 @@ public class Cluster {
         this.vitrine = new ArrayList();
     }
 
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
+
+    
     public List<Player> getPlayers() {
         return players;
     }

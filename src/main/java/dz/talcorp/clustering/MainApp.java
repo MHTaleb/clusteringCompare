@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
+
 public class MainApp extends Application {
 
     @Override
@@ -20,6 +21,8 @@ public class MainApp extends Application {
         stage.setTitle("PFE Madani et Dib");
         stage.setScene(scene);
         stage.show();
+        
+          
     }
 
     /**

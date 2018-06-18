@@ -97,38 +97,51 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font></JFXTextField>
                                                 <JFXButton onAction="#openFileChooser" prefHeight="42.0" prefWidth="97.0" ripplerFill="#40476d" styleClass="open_file_icon" text="Ouvrir" />
+                                                <JFXButton onAction="#convert" prefHeight="37.0" prefWidth="231.0" ripplerFill="#40476d" styleClass="open_file_icon" text="Convertir Image en CSV" />
                                              </children>
                                           </HBox>
                                           <HBox fx:id="nbrClassDetecter" prefHeight="38.0" prefWidth="838.0" spacing="22.0">
                                              <children>
-                                                <JFXRadioButton fx:id="algo1" ellipsisString="" onAction="#setChart" selected="true" text=" kmeans">
-                                                   <font>
-                                                      <Font name="System Bold" size="12.0" />
-                                                   </font>
-                                                   <toggleGroup>
-                                                      <ToggleGroup fx:id="group" />
-                                                   </toggleGroup>
-                                                </JFXRadioButton>
-                                                <JFXComboBox fx:id="gValue" promptText="type distance" />
+                                                <VBox prefHeight="42.0" prefWidth="109.0">
+                                                   <children>
+                                                      <JFXRadioButton fx:id="algo1" ellipsisString="" onAction="#setChart" selected="true" text=" kmeans">
+                                                         <font>
+                                                            <Font name="System Bold" size="12.0" />
+                                                         </font>
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="group" />
+                                                         </toggleGroup>
+                                                      </JFXRadioButton>
+                                                      <JFXComboBox fx:id="gValue" prefHeight="25.0" prefWidth="98.0" promptText="type distance" />
+                                                   </children>
+                                                </VBox>
                                                 <JFXRadioButton fx:id="algo2" onAction="#setChart" text="Blind" toggleGroup="$group">
                                                    <font>
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </JFXRadioButton>
-                                                <JFXRadioButton fx:id="algoTHJ" onAction="#setTHJChart" text="THJ" toggleGroup="$group">
-                                                   <font>
-                                                      <Font name="System Bold" size="12.0" />
-                                                   </font>
-                                                </JFXRadioButton>
-                                                <JFXTextField fx:id="SeuilField" prefHeight="25.0" prefWidth="30.0" promptText="seuil" />
-                                                <HBox alignment="TOP_RIGHT" spacing="20.0" HBox.hgrow="ALWAYS">
+                                                <VBox prefHeight="42.0" prefWidth="65.0">
                                                    <children>
-                                                      <Label prefHeight="17.0" prefWidth="122.0" text="Nombre de Classe">
+                                                      <JFXRadioButton fx:id="algoTHJ" onAction="#setTHJChart" text="THJ" toggleGroup="$group">
                                                          <font>
                                                             <Font name="System Bold" size="12.0" />
                                                          </font>
-                                                      </Label>
-                                                      <JFXSlider fx:id="nombreClusterDiabete" blockIncrement="1.0" majorTickUnit="1.0" max="20.0" min="2.0" minorTickCount="0" prefHeight="38.0" prefWidth="230.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" HBox.hgrow="ALWAYS" />
+                                                      </JFXRadioButton>
+                                                      <JFXTextField fx:id="SeuilField" prefHeight="25.0" prefWidth="30.0" promptText="seuil" />
+                                                   </children>
+                                                </VBox>
+                                                <HBox alignment="TOP_RIGHT" spacing="20.0" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <VBox HBox.hgrow="ALWAYS">
+                                                         <children>
+                                                            <Label prefHeight="17.0" prefWidth="122.0" text="Nombre de Classe">
+                                                               <font>
+                                                                  <Font name="System Bold" size="12.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <JFXSlider fx:id="nombreClusterDiabete" blockIncrement="1.0" majorTickUnit="1.0" max="20.0" min="2.0" minorTickCount="0" prefHeight="38.0" prefWidth="230.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
+                                                         </children>
+                                                      </VBox>
                                                    </children>
                                                    <padding>
                                                       <Insets left="30.0" />
