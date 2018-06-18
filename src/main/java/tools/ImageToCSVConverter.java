@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
+import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.poi.ss.usermodel.Cell;
 
@@ -40,7 +41,8 @@ public class ImageToCSVConverter {
 
         chooser.getExtensionFilters().clear();
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("XLS", "*.xlsx")
+                new FileChooser.ExtensionFilter("XLS", "*.xlsx"),
+                new FileChooser.ExtensionFilter("CSV", "*.csv")
         );
 
         List<List<Integer>> matriceCSV = new ArrayList();
@@ -70,13 +72,19 @@ public class ImageToCSVConverter {
                             ligne.add(readImage.getRGB(j, i));
                         }
                     }
-//                    CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator("\n").withDelimiter(',').withFirstRecordAsHeader();
-//                    fWriter = new FileWriter(toSaveCSV);
-//                    csvPrinter = new CSVPrinter(fWriter, csvFormat);
-//                    csvPrinter.printRecord(headers);
-//                    for (int i = 0; i < matriceCSV.size(); i++) {
-//                        csvPrinter.printRecord(matriceCSV.get(i));
-//                    }
+                    
+                    if(toSaveCSV.getName().endsWith("csv")){
+                            CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator("\n").withDelimiter(',').withFirstRecordAsHeader();
+                            fWriter = new FileWriter(toSaveCSV);
+                            csvPrinter = new CSVPrinter(fWriter, csvFormat);
+                            csvPrinter.printRecord(headers);
+                            for (int i = 0; i < matriceCSV.size(); i++) {
+                                csvPrinter.printRecord(matriceCSV.get(i));
+                            }
+                        
+                    }else{
+                        
+                    
                     Row row = sheet.createRow(rowNum++);
                     int colNum = 0;
                     for (int i = 0 ; i<headers.size() ; i++) {
@@ -93,6 +101,7 @@ public class ImageToCSVConverter {
                     }
              FileOutputStream outputStream = new FileOutputStream(toSaveCSV);
              workbook.write(outputStream);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
