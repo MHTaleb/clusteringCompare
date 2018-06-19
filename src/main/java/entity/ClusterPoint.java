@@ -12,11 +12,21 @@ import java.util.List;
  * @author taleb
  */
 public class ClusterPoint {
-
+    private String playerIndex;
     private double x, y; // coordonée
     private int currentCluster;
     private int nearestIndex;
 
+    public void setPlayerIndex(String playerIndex) {
+        this.playerIndex = playerIndex;
+    }
+
+    public String getPlayerIndex() {
+        return playerIndex;
+    }
+
+    
+    
     public ClusterPoint() {
         this.x = Math.random() * 150;
         this.y = Math.random() * 150;

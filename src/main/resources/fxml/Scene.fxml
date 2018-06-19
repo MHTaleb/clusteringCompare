@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="906.0" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dz.talcorp.clustering.FXMLController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="906.0" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dz.talcorp.clustering.FXMLController">
    <children>
       <BorderPane layoutX="209.0" layoutY="97.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
@@ -97,7 +97,6 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font></JFXTextField>
                                                 <JFXButton onAction="#openFileChooser" prefHeight="42.0" prefWidth="97.0" ripplerFill="#40476d" styleClass="open_file_icon" text="Ouvrir" />
-                                                <JFXButton onAction="#convert" prefHeight="37.0" prefWidth="231.0" ripplerFill="#40476d" styleClass="open_file_icon" text="Convertir Image en CSV" />
                                              </children>
                                           </HBox>
                                           <HBox fx:id="nbrClassDetecter" prefHeight="38.0" prefWidth="838.0" spacing="22.0">
@@ -127,7 +126,6 @@
                                                             <Font name="System Bold" size="12.0" />
                                                          </font>
                                                       </JFXRadioButton>
-                                                      <JFXTextField fx:id="SeuilField" prefHeight="25.0" prefWidth="30.0" promptText="seuil" />
                                                    </children>
                                                 </VBox>
                                                 <HBox alignment="TOP_RIGHT" spacing="20.0" HBox.hgrow="ALWAYS">
@@ -198,6 +196,87 @@
                                     </VBox>
                                  </children></AnchorPane>
                           </content>
+                        </Tab>
+                        <Tab text="Non Supervisé">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <VBox layoutX="6.0" prefHeight="200.0" prefWidth="100.0" spacing="34.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+                                             <children>
+                                                <JFXTextField fx:id="cheminNonSupervise" editable="false" focusColor="#299e3a" labelFloat="true" prefHeight="25.0" prefWidth="306.0" promptText="Chemin" text="c:/" unFocusColor="#0e9654" HBox.hgrow="ALWAYS">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </JFXTextField>
+                                                <JFXButton onAction="#openFileChooser" prefHeight="42.0" prefWidth="97.0" ripplerFill="#40476d" styleClass="open_file_icon" text="Ouvrir" />
+                                                <JFXButton onAction="#convert" prefHeight="37.0" prefWidth="231.0" ripplerFill="#40476d" styleClass="open_file_icon" text="Convertir Image en CSV" />
+                                             </children>
+                                          </HBox>
+                                          <HBox fx:id="nbrClassDetecter1" prefHeight="38.0" prefWidth="838.0" spacing="22.0">
+                                             <children>
+                                                <VBox prefHeight="42.0" prefWidth="65.0">
+                                                   <children>
+                                                      <JFXRadioButton fx:id="algoTHJNonSupervise" onAction="#setTHJChart" text="THJ">
+                                                         <font>
+                                                            <Font name="System Bold" size="12.0" />
+                                                         </font>
+                                                         <toggleGroup>
+                                                            <ToggleGroup fx:id="group1" />
+                                                         </toggleGroup>
+                                                      </JFXRadioButton>
+                                                   </children>
+                                                </VBox>
+                                                <HBox alignment="TOP_RIGHT" spacing="20.0" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <VBox HBox.hgrow="ALWAYS">
+                                                         <children>
+                                                            <Label prefHeight="17.0" prefWidth="122.0" text="Nombre de Classe">
+                                                               <font>
+                                                                  <Font name="System Bold" size="12.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <JFXSlider fx:id="nombreClasseNonSupervise" blockIncrement="1.0" majorTickUnit="1.0" max="20.0" min="2.0" minorTickCount="0" prefHeight="38.0" prefWidth="230.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" />
+                                                         </children>
+                                                      </VBox>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets left="30.0" />
+                                                   </padding>
+                                                </HBox>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                             <padding>
+                                                <Insets left="15.0" right="5.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox fx:id="mapDiabete1" prefHeight="261.0" prefWidth="838.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <HBox fx:id="csvMapsnonSupervise" prefHeight="217.0" prefWidth="479.0" HBox.hgrow="ALWAYS" />
+                                             </children>
+                                          </HBox>
+                                          <HBox>
+                                             <children>
+                                                <HBox HBox.hgrow="SOMETIMES" />
+                                                <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <JFXButton onAction="#LancerSimulationcsv" prefHeight="25.0" prefWidth="1163.0" ripplerFill="#40476d" text="Lancer" HBox.hgrow="ALWAYS" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox HBox.hgrow="SOMETIMES" />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="34.0" left="34.0" right="34.0" top="34.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                           </content>
                         </Tab>
                      </tabs>
                   </JFXTabPane>

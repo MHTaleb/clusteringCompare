@@ -16,13 +16,7 @@ import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.poi.ss.usermodel.Cell;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -41,7 +35,7 @@ public class ImageToCSVConverter {
 
         chooser.getExtensionFilters().clear();
         chooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("XLS", "*.xlsx"),
+            
                 new FileChooser.ExtensionFilter("CSV", "*.csv")
         );
 
@@ -50,11 +44,11 @@ public class ImageToCSVConverter {
         File toSaveCSV = chooser.showSaveDialog(null);
         if (selectedImage != null) {
             CSVPrinter csvPrinter = null;
-            XSSFWorkbook workbook = new XSSFWorkbook();
+           
             FileWriter fWriter = null;
             try {
 
-                XSSFSheet sheet = workbook.createSheet("Datatypes in Java");
+               
                 int rowNum = 0;
                 if (toSaveCSV.createNewFile()) {
                     BufferedImage readImage = ImageIO.read(selectedImage);
@@ -74,7 +68,7 @@ public class ImageToCSVConverter {
                     }
                     
                     if(toSaveCSV.getName().endsWith("csv")){
-                            CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator("\n").withDelimiter(',').withFirstRecordAsHeader();
+                            CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator("\n").withDelimiter(';').withFirstRecordAsHeader();
                             fWriter = new FileWriter(toSaveCSV);
                             csvPrinter = new CSVPrinter(fWriter, csvFormat);
                             csvPrinter.printRecord(headers);
@@ -84,30 +78,14 @@ public class ImageToCSVConverter {
                         
                     }else{
                         
-                    
-                    Row row = sheet.createRow(rowNum++);
-                    int colNum = 0;
-                    for (int i = 0 ; i<headers.size() ; i++) {
-                        Cell headerCell = row.createCell(colNum++);
-                        headerCell.setCellValue(headers.get(i));
-                    }
-                    
-                    for (int i = 0; i < matriceCSV.size(); i++) {
-                        XSSFRow dataRow = sheet.createRow(rowNum++);
-                        for (int j = 0; j < matriceCSV.get(0).size(); j++) {
-                            XSSFCell dataCell = dataRow.createCell(j);
-                            dataCell.setCellValue(matriceCSV.get(i).get(j));
-                        }
-                    }
-             FileOutputStream outputStream = new FileOutputStream(toSaveCSV);
-             workbook.write(outputStream);
+                
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
                 try {
-                     workbook.close();
+                     
                     if (fWriter != null) {
                         fWriter.flush();
                         fWriter.close();

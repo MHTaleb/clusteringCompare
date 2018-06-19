@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
@@ -68,9 +69,8 @@ public class FXMLController implements Initializable {
     @FXML
     private TableColumn<TableClusterElement, String> membreApres;
 
-    @FXML
     private JFXTextField SeuilField;
-    
+
     @FXML
     private HBox csvMaps;
 
@@ -128,6 +128,20 @@ public class FXMLController implements Initializable {
     private JFXRadioButton algoTHJ;
     @FXML
     private VBox tableContainer;
+    @FXML
+    private JFXTextField cheminNonSupervise;
+    @FXML
+    private HBox nbrClassDetecter1;
+    @FXML
+    private JFXRadioButton algoTHJNonSupervise;
+    @FXML
+    private ToggleGroup group1;
+    @FXML
+    private JFXSlider nombreClasseNonSupervise;
+    @FXML
+    private HBox mapDiabete1;
+    @FXML
+    private HBox csvMapsnonSupervise;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -184,7 +198,7 @@ public class FXMLController implements Initializable {
                 seriesMembre.setName("membre du cluster " + i);
                 // ajouter la population
                 points.stream().filter(prdct).forEach((ClusterPoint point) -> {
-                    seriesMembre.getData().add(new XYChart.Data<>(point.getX() / 1, point.getY() / 1));
+                    seriesMembre.getData().add(new XYChart.Data<>(point.getX()/1 , point.getY()/1 ));
                 });
 //
 //                System.out.println(seriesCentre);
@@ -230,64 +244,6 @@ public class FXMLController implements Initializable {
     }
 
     private void initialzeThjChart() {
-
-        csvMaps.getChildren().remove(kItereChart);
-        csvMaps.getChildren().remove(chartCSVInitial);
-        csvMaps.getChildren().remove(chartCSV);
-        csvMaps.getChildren().remove(chartCSVBruit);
-        mapDiabete.getChildren().remove(tableContainer);
-
-        NumberAxis axisX = new NumberAxis(-500, 500, 10);
-        NumberAxis axisY = new NumberAxis(-500, 500, 10);
-
-        axisX.setAutoRanging(true);
-        axisX.setLabel("Nombre Cluster ");
-        axisX.setForceZeroInRange(false);
-        axisY.setAutoRanging(true);
-        axisY.setLabel("Taux");
-        axisY.setForceZeroInRange(false);
-
-        kItereChart = new LineChart<>(axisX, axisY);
-        kItereChart.setTitle("Graphe des WB de l algorithm THJ");
-
-        kItereChart.autosize();
-        kItereChart.prefWidthProperty().bind(csvMaps.widthProperty());
-        kItereChart.prefHeightProperty().bind(csvMaps.heightProperty());
-        csvMaps.getChildren().add(kItereChart);
-
-        axisX = new NumberAxis(-500, 500, 10);
-        axisY = new NumberAxis(-500, 500, 10);
-
-        axisX.setAutoRanging(true);
-        axisX.setLabel("X");
-        axisX.setForceZeroInRange(false);
-        axisY.setAutoRanging(true);
-        axisY.setLabel("Y");
-        axisY.setForceZeroInRange(false);
-
-        chartCSV = new ScatterChart<>(axisX, axisY);
-        chartCSV.setTitle("clustering final");
-        chartCSV.autosize();
-        chartCSV.prefWidthProperty().bind(csvMaps.widthProperty());
-        chartCSV.prefHeightProperty().bind(csvMaps.heightProperty());
-        csvMaps.getChildren().add(chartCSV);
-
-        axisX = new NumberAxis(-500, 500, 10);
-        axisY = new NumberAxis(-500, 500, 10);
-
-        axisX.setAutoRanging(true);
-        axisX.setLabel("X");
-        axisX.setForceZeroInRange(false);
-        axisY.setAutoRanging(true);
-        axisY.setLabel("Y");
-        axisY.setForceZeroInRange(false);
-
-        chartCSVInitial = new ScatterChart<>(axisX, axisY);
-        chartCSVInitial.setTitle("clustering initial");
-        chartCSVInitial.autosize();
-        chartCSVInitial.prefWidthProperty().bind(csvMaps.widthProperty());
-        chartCSVInitial.prefHeightProperty().bind(csvMaps.heightProperty());
-        csvMaps.getChildren().add(chartCSVInitial);
     }
 
     private void initializeChart() {
@@ -394,16 +350,8 @@ public class FXMLController implements Initializable {
 
     @FXML
     void LancerSimulationcsv(ActionEvent event) {
-
+        System.out.println("begin simulation");
         List<ClusteringDataPair> listeDesAttribusAvecValeur = null;
-        try {
-            csvpb = new CSVPointBuilder(selectedFile.getAbsolutePath());
-            listeDesAttribusAvecValeur = csvpb.getClusteringDataColumn();
-            System.out.println(listeDesAttribusAvecValeur); // matrice des données
-
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         // choix de collone du graphe
         final int PARAM_AFFICHAGE_1 = 3;
@@ -411,15 +359,39 @@ public class FXMLController implements Initializable {
 
         // notre algo
         if (algo2.isSelected()) {
+            try {
+                csvpb = new CSVPointBuilder(selectedFile.getAbsolutePath(), true);
+                listeDesAttribusAvecValeur = csvpb.getClusteringDataColumn();
+                System.out.println(listeDesAttribusAvecValeur); // matrice des données
+
+            } catch (Exception ex) {
+                Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
             algoBinome(listeDesAttribusAvecValeur, PARAM_AFFICHAGE_1, PARAM_AFFICHAGE_2);
         }
         // chaouch algo
         if (algo1.isSelected()) {
+            try {
+                csvpb = new CSVPointBuilder(selectedFile.getAbsolutePath(), false);
+                listeDesAttribusAvecValeur = csvpb.getClusteringDataColumn();
+                System.out.println(listeDesAttribusAvecValeur); // matrice des données
+
+            } catch (Exception ex) {
+                Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             algoChaouech(listeDesAttribusAvecValeur, PARAM_AFFICHAGE_1, PARAM_AFFICHAGE_2);
 
         }
         if (algoTHJ.isSelected()) {
+            try {
+                csvpb = new CSVPointBuilder(selectedFile.getAbsolutePath(), false);
+                listeDesAttribusAvecValeur = csvpb.getClusteringDataColumn();
+                System.out.println(listeDesAttribusAvecValeur); // matrice des données
+
+            } catch (Exception ex) {
+                Logger.getLogger(FXMLController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             int valeurG = 2;
             algorithmTHJ(listeDesAttribusAvecValeur, valeurG, PARAM_AFFICHAGE_1, PARAM_AFFICHAGE_2);
 
@@ -535,7 +507,7 @@ public class FXMLController implements Initializable {
     }
 
     public void algoBinome(List<ClusteringDataPair> listeDesAttribusAvecValeur, final int PARAM_AFFICHAGE_1, final int PARAM_AFFICHAGE_2) throws NumberFormatException {
-        Hashtable<String, List<ClusterPoint>> clusteringDimensions = csvpb.getClusteringDimensions();
+        Map<String, List<ClusterPoint>> clusteringDimensions = csvpb.getClusteringDimensions();
         simulations = new ArrayList<>();
 
         clusteringDimensions.keySet().stream().forEach(key -> {
@@ -649,53 +621,20 @@ public class FXMLController implements Initializable {
     }
 
     private void algorithmTHJ(List<ClusteringDataPair> listeDesAttribusAvecValeur, int valeurG, int PARAM_AFFICHAGE_1, int PARAM_AFFICHAGE_2) {
-        
-        
-        
-        List<ChaouchAlgorithm> cas = new ArrayList<>();
-        for (int k = 2; k < nombreClusterDiabete.getValue()+1; k++) {
-            ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
-            ca.resolve(k, 2);
-            cas.add(ca);
-        }
 
-        int indexCA = 0;
-        double best_kCA = Double.MAX_VALUE;
-        for (int j = 0; j < cas.size(); j++) {
-            ChaouchAlgorithm ca = cas.get(j);
-            double bestWB = ca.getWB();
-            if (best_kCA > bestWB) {
-                indexCA = j;
-                best_kCA = bestWB;
-            }
-        }
-        
-        
+        int k = (int) nombreClusterDiabete.getValue();
+        ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+        ca.resolve(k, 2);
+
         tit1e = "THJ";
-        List<THJAlgorithm> tHJAlgorithms = new ArrayList<>();
 
-        ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
-        for (int k = 2; k < nombreClusterDiabete.getValue()+1; k++) {
-            THJAlgorithm thja = new THJAlgorithm(algorithm.getMatriceCSV(), Integer.parseInt(SeuilField.getText()) , cas.get(k-2).getWB() );
-            thja.resolve(k);
-            tHJAlgorithms.add(thja);
+        THJAlgorithm thja = new THJAlgorithm(ca.getMatriceCSV(), 18000, ca.getWB());
+        thja.resolve(k);
 
-            System.out.println("best wb for " + k + " is : " + thja.getBestWB());
-            System.out.println("best composition for " + k + " is : " + thja.getBestMap().values());
-        }
+        System.out.println("best wb for " + k + " is : " + thja.getBestWB());
+        System.out.println("best composition for " + k + " is : " + thja.getBestMap().values());
 
-        int index = 0;
-        double best_k = Double.MAX_VALUE;
-        for (int i = 0; i < tHJAlgorithms.size(); i++) {
-            THJAlgorithm tHJAlgorithm = tHJAlgorithms.get(i);
-            double bestWB = tHJAlgorithm.getBestWB();
-            if (best_k > bestWB) {
-                index = i;
-                best_k = bestWB;
-            }
-        }
-        THJAlgorithm elu = tHJAlgorithms.get(index);
-        Hashtable<Integer, Cluster> bestMap = elu.getBestMap();
+        Hashtable<Integer, Cluster> bestMap = thja.getBestMap();
         List<ClusterPoint> centroids = new ArrayList<>();
         List<ClusterPoint> points = new ArrayList<>();
         int i = 0;
@@ -709,62 +648,133 @@ public class FXMLController implements Initializable {
             for (Player player : cluster.getPlayers()) {
                 final ClusterPoint playerPoint = new ClusterPoint(player.getAttributes().get(PARAM_AFFICHAGE_1), player.getAttributes().get(PARAM_AFFICHAGE_2));
                 playerPoint.setCurrentCluster(i);
+                playerPoint.setPlayerIndex(player.getName());
                 points.add(playerPoint);
             }
             i++;
         }
 
-        title = "kmeans";
-        kItereChart.getData().clear();
-        final XYChart.Series series = new XYChart.Series();
-        series.setName("Theorie des jeu");
-        tHJAlgorithms.stream().forEach(experiance -> {
-            series.getData().add(new XYChart.Data(series.getData().size() + 2, experiance.getBestWB()));
-        });
-        kItereChart.getData().add(series);
-
-        drawChart(elu.getIteration(), centroids, points, chartCSV);
-
-        ChaouchAlgorithm eluCA = cas.get(indexCA);
+        //------------------------- Affichage
+        chartCSVInitial.dataProperty().get().clear();
+        chartCSV.dataProperty().get().clear();
+        chartCSVBruit.dataProperty().get().clear();
 
         Predicate<? super ClusteringDataPair> classFilter = cdp -> {
             return cdp.getColumnName().toLowerCase().trim().equals("class");
         };
 
         ClusteringDataPair classColumnAlgo2 = listeDesAttribusAvecValeur.stream().filter(classFilter).findFirst().get();
+
         final List<Integer> centersPrevious = new ArrayList();
 
         classColumnAlgo2.getColumnPoints().stream().forEach(center -> {
+            System.out.println("center foudn   "+center.getValue().intValue());
             centersPrevious.add(center.getValue().intValue());
         });
 
-        List<Integer> classesAlgorithme = eluCA.getClasses();
-        chartCSVInitial.dataProperty().get().clear();
-        for (int l = 0; l < indexCA ; l++) { //+ (int) nombreClusterDiabete.getValue()
+        //-----------------------------------
+        for(int l = 0 ; l<k ; l++){
+        final ObservableList<XYChart.Data<Number, Number>> observableArrayListBruit = FXCollections.observableArrayList();
+            
+        for (int j = 0; j < centersPrevious.size(); j++) {
+            if (centersPrevious.get(j) == l) {
+                final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1).getColumnPoints().get(j).getValue();
+                final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2).getColumnPoints().get(j).getValue();
+                System.out.println("x = " + x + "   y = " + y + "  noise");
+                observableArrayListBruit.add(new XYChart.Data<>(Double.valueOf(x), Double.valueOf(y)));
+            }
+        }
 
-            final ObservableList<XYChart.Data<Number, Number>> observableArrayList = FXCollections.observableArrayList();
+        final XYChart.Series<Number, Number> seriesBruit = new XYChart.Series<>(observableArrayListBruit);
+        seriesBruit.setName("class" + l);
+        chartCSVInitial.dataProperty().get().add(seriesBruit);
+        
+        }
+        
+        
+        for(int l = 0 ; l<k ; l++){
+        final ObservableList<XYChart.Data<Number, Number>> observableArrayListBruit = FXCollections.observableArrayList();
+            
+        for (int j = 0; j < centersPrevious.size(); j++) {
+            Predicate<? super ClusterPoint> prdct;
+            final int J = j;
+            prdct = (ClusterPoint cp) -> {return cp.getPlayerIndex().equals(""+J);};
+            try {
+                
+            if (centersPrevious.get(j) == l && centersPrevious.get(j)==points.stream().filter(prdct).findFirst().get().getCurrentCluster() ) {
+                final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1).getColumnPoints().get(j).getValue();
+                final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2).getColumnPoints().get(j).getValue();
+                System.out.println("x = " + x + "   y = " + y + "  noise");
+                observableArrayListBruit.add(new XYChart.Data<>(Double.valueOf(x), Double.valueOf(y)));
+            }
+            } catch (Exception e) {
+                System.out.println("element a la corbeil "+j);
+            }
+        }
 
-            for (int j = 0; j < centersPrevious.size(); j++) {
-                //if (Objects.equals(centersPrevious.get(j), classesAlgorithme.get(j)) && centersPrevious.get(j) == i) {
-                if (classesAlgorithme.get(j) == l) {
-                    final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1).getColumnPoints().get(j).getValue();
-                    final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2).getColumnPoints().get(j).getValue();
-                    System.out.println("x = " + x + "   y = " + y + "  clust");
-                    observableArrayList.add(new XYChart.Data<>(Double.valueOf(x), Double.valueOf(y)));
+        final XYChart.Series<Number, Number> seriesBruit = new XYChart.Series<>(observableArrayListBruit);
+        seriesBruit.setName("class" + l);
+        chartCSVBruit.dataProperty().get().add(seriesBruit);
+        
+        }
+        
+        
+            
+        ///affichage final
+            drawChart(thja.getIteration(), centroids, points, chartCSV);
+
+         /// affichage tableau
+         List<Integer> classesAlgorithme = new ArrayList();
+         
+        int populationSize = centersPrevious.size();
+        for (int j = 0; j < populationSize; j++) {
+            classesAlgorithme.add(-1);
+        }
+        
+            
+        for (int j = 0; j < populationSize; j++) {
+            final int J = j;
+            Predicate<? super ClusterPoint> elementId = cp -> {return cp.getPlayerIndex().equals(""+J);};
+            try {
+                final ClusterPoint cp = points.stream().filter(elementId).findFirst().get();
+                String index = cp.getPlayerIndex();
+                int currentCluster = cp.getCurrentCluster();
+                classesAlgorithme.remove(Integer.parseInt(index));
+                classesAlgorithme.add(Integer.parseInt(index),currentCluster);
+                
+            } catch (Exception e) {
+                System.out.println("element a la corbeil "+j);
+            }
+        }
+         System.out.println("class algo "+classesAlgorithme);
+         System.out.println("centersPrevious" + centersPrevious);
+        int currentBenchMarkSize = 0;
+        int currentWellClassedSize = 0;
+        for (int l = 0; l < nombreClusterDiabete.getValue(); l++) {
+            int count = 0;
+            for (Integer integer : classesAlgorithme) {
+                if (integer == l) {
+                    count++;
                 }
             }
-
-            final XYChart.Series<Number, Number> caSerieDraw = new XYChart.Series<>(observableArrayList);
-            caSerieDraw.setName("class" + l);
-            chartCSVInitial.dataProperty().get().add(caSerieDraw);
+            int wellClassedSize = 0;
+            for (int j = 0; j < centersPrevious.size(); j++) {
+                if (Objects.equals(centersPrevious.get(j), classesAlgorithme.get(j)) && centersPrevious.get(j) == l) {
+                    wellClassedSize++;
+                }
+            }
+            final int benchmarkSize = centersPrevious.lastIndexOf(l) - currentBenchMarkSize + 1;
+            tableStudyResultList.add(new TableClusterElement("" + (benchmarkSize),
+                    "" + count, "" + wellClassedSize, "" + ((float) wellClassedSize / (float) benchmarkSize) * 100));
+            currentWellClassedSize += wellClassedSize;
+            currentBenchMarkSize += benchmarkSize;
         }
-        final XYChart.Series seriesCAK = new XYChart.Series();
-        seriesCAK.setName("Kmeans");
-        cas.stream().forEach(experiance -> {
-            seriesCAK.getData().add(new XYChart.Data(seriesCAK.getData().size() + 2, experiance.getWB()));
-        });
-        kItereChart.getData().add(seriesCAK);
-
+        tableStudyResultList.add(new TableClusterElement("" + (currentBenchMarkSize),
+                "" + currentBenchMarkSize, "" + currentWellClassedSize, "" + ((float) currentWellClassedSize / (float) currentBenchMarkSize) * 100));
+   
+            
+            
+            
     }
 
     @FXML

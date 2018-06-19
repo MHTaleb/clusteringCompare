@@ -65,7 +65,7 @@ public class Player {
                 distanceMoyenne += distance;
             }
             final float capital = distanceMoyenne / currentClusterSize;
-            System.out.println(name+" capital avec "+i+" = "+capital);
+            //  System.out.println(name+" capital avec "+i+" = "+capital);
             distancesIntraCluster.add(i,capital);
         }
     }
@@ -113,6 +113,10 @@ public class Player {
     @Override
     public String toString() {
         return "\n "+this.attributes;
+    }
+
+    public String getName() {
+        return name;
     }
     
     

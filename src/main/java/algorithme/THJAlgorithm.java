@@ -49,13 +49,15 @@ public class THJAlgorithm {
     private int nombre_iteration;
 
     public void resolve(int k) {
-
+         int moins = seuil/130;
+        System.out.println("start");
         // creation de la population
         List<Player> players = new ArrayList<>();
         for (int i = 0; i < matriceCSV.size(); i++) {
 
-            players.add(new Player("p("+i+")",matriceCSV.get(i)));
+            players.add(new Player(""+i,matriceCSV.get(i)));
         }
+        System.out.println("players added");
 
         // choix k centre aleatoir
         for (int i = 0; i < k; i++) {
@@ -63,6 +65,7 @@ public class THJAlgorithm {
             //currentCentroid.add(centroid);
             clusterMap.put(i, new Cluster(centroid));
         }
+        System.out.println("selected centers");
 
         // pour chaque joueur
         for (int j = 0; j < players.size(); j++) {
@@ -226,7 +229,7 @@ public class THJAlgorithm {
             }
             nombre_iteration = iteration;
             if (wb > best_kCA) {
-                seuil-=75;
+                seuil-=moins;
                 System.out.println("nouveau seuil "+seuil);
             }
         }
