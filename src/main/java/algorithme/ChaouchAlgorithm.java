@@ -7,6 +7,7 @@ package algorithme;
 
 import builder.ClusteringDataPair;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 
@@ -188,6 +189,65 @@ public class ChaouchAlgorithm {
         wb = currentCentroid.size() * ssw / ssb;
         return wb;
     }
+    private Hashtable<Integer, Cluster> clusterMap;
+
+    public double getDaviesBouldin(int k) {
+        initClusterMap();
+        double DB = 0;
+        for (int i = 0; i < clusterMap.size(); i++) {
+            DB += calculerD(i);
+        }
+
+        return DB / clusterMap.size();
+    }
+
+    public double calculerD(int i) {
+        double di = Double.MIN_VALUE;
+
+        for (int j = 0; j < clusterMap.size(); j++) {
+            if (i != j) {
+                Double calculerRij = calculerRij(i, j);
+                if (di < calculerRij) {
+                    di = calculerRij;
+                }
+            }
+        }
+
+        return di;
+    }
+
+    private Double calculerRij(int i, int j) {
+        double rij = 0;
+
+        double sj = calculerS(j);
+        double si = calculerS(i);
+        double mij = calculerM(i, j);
+
+        rij = (si + sj) / mij;
+        return rij;
+    }
+
+    private double calculerS(int i) {
+        double si;
+        double somme = 0;
+
+        Cluster clusterI = clusterMap.get(i);
+        List<Float> ai = clusterI.getClusterCoordinates();
+        final List<Player> membreClusterI = clusterI.getPlayers();
+
+        for (int j = 0; j < membreClusterI.size(); j++) {
+            Player xj = membreClusterI.get(j);
+            somme += Math.pow(Math.abs(minus(xj.getAttributes(), ai)), 2);
+        }
+        si = Math.pow(somme / membreClusterI.size(), 1 / 2);
+        return si;
+    }
+
+    private double calculerM(int i, int j) {
+        double mij = minus(clusterMap.get(i).getClusterCoordinates(), clusterMap.get(j).getClusterCoordinates());
+
+        return mij;
+    }
 
     @Override
     public String toString() {
@@ -200,6 +260,22 @@ public class ChaouchAlgorithm {
             sw += Math.pow(Math.abs(xi.get(i) - ci.get(i)), 2);
         }
         return sw;
+    }
+
+    private void initClusterMap() {
+        clusterMap = new Hashtable<>();
+        // creation des cluster
+        for (int i = 0; i < currentCentroid.size(); i++) {
+            clusterMap.put(i, new Cluster(currentCentroid.get(i)));
+        }
+
+        // affectation des memebres
+        for (int i = 0; i < matriceCSV.size(); i++) {
+            List<Float> player = matriceCSV.get(i);
+            Integer indiceCluster = classes.get(i);
+            clusterMap.get(indiceCluster).putPlayer(new Player("" + i, player));
+        }
+
     }
 
 }

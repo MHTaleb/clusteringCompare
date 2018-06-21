@@ -5,6 +5,7 @@
  */
 package tools;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -55,15 +56,21 @@ public class ImageToCSVConverter {
                     final int colonsSize = readImage.getWidth();
                     ArrayList<String> headers = new ArrayList();
 
-                    for (int i = 0; i < colonsSize; i++) {
-                        headers.add("ATT" + i);
-                    }
+//                    for (int i = 0; i < colonsSize; i++) {
+//                        headers.add("ATT" + i);
+//                    }
+                    headers.add("RED");
+                    headers.add("GREEN");
+                    headers.add("BLUE");
 
                     for (int i = 0; i < readImage.getHeight(); i++) { // ligne indice
-                        List ligne = new ArrayList<>();
-                        matriceCSV.add(ligne);
                         for (int j = 0; j < colonsSize; j++) { // collone indice
-                            ligne.add(readImage.getRGB(j, i));
+                        List ligne = new ArrayList<>();
+                        Color c = new Color(readImage.getRGB(j, i));
+                        ligne.add(c.getRed());
+                        ligne.add(c.getGreen());
+                        ligne.add(c.getBlue());
+                        matriceCSV.add(ligne);
                         }
                     }
                     

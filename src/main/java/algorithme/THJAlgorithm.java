@@ -15,26 +15,28 @@ import java.util.stream.Collectors;
  * @author taleb
  */
 public class THJAlgorithm {
+    
+    int seuil;
+    // private final List<List<Float>> currentCentroid;
 
-     int seuil ;
-   // private final List<List<Float>> currentCentroid;
-
+    private boolean wbChoice = true;    
+    
     private final List<List<Float>> matriceCSV;
-
+    
     private double bestWB;
-
+    
     private List<Player> corbeil;
-
+    
     private final List<Float> lambda;
-
+    
     private Hashtable<Integer, Cluster> bestMap;
-
+    
     private final List<Integer> classClustering;
-
+    
     private final Hashtable<Integer, Cluster> clusterMap;
     private final double best_kCA;
-
-    public THJAlgorithm(List<List<Float>> matriceCSV,int seuil,double best_kCA) {
+    
+    public THJAlgorithm(List<List<Float>> matriceCSV, int seuil, double best_kCA) {
         //this.currentCentroid = new ArrayList();
         this.matriceCSV = matriceCSV;
         this.classClustering = new ArrayList();
@@ -44,18 +46,18 @@ public class THJAlgorithm {
         corbeil = new ArrayList<>();
         this.seuil = seuil;
         this.best_kCA = best_kCA;
-
+        
     }
     private int nombre_iteration;
-
+    
     public void resolve(int k) {
-         int moins = seuil/130;
+        int moins = seuil / 120;
         System.out.println("start");
         // creation de la population
         List<Player> players = new ArrayList<>();
         for (int i = 0; i < matriceCSV.size(); i++) {
-
-            players.add(new Player(""+i,matriceCSV.get(i)));
+            
+            players.add(new Player("" + i, matriceCSV.get(i)));
         }
         System.out.println("players added");
 
@@ -70,11 +72,11 @@ public class THJAlgorithm {
         // pour chaque joueur
         for (int j = 0; j < players.size(); j++) {
             Player player = players.get(j);
-
+            
             int bestClusterIndex = 0;
             double minDistance = Double.MAX_VALUE;
             int index = 0;
-
+            
             for (int l = 0; l < clusterMap.size(); l++) {
                 Cluster cluster = clusterMap.get(l);
                 final List<Float> clusterCoordinates = cluster.getClusterCoordinates();
@@ -89,7 +91,7 @@ public class THJAlgorithm {
                 index++;
             }
             clusterMap.get(bestClusterIndex).putPlayer(player);
-
+            
         }
         //-------------
 
@@ -98,30 +100,29 @@ public class THJAlgorithm {
         boolean state = true;
         for (int iteration = 0; iteration < 120 && state; iteration++) {
 
-
             //vider la corbeil
             for (int i = 0; i < corbeil.size(); i++) {
                 Player candidat_retour = corbeil.get(i);
                 candidat_retour.calculerDistanceIntraCluster(new ArrayList<>(clusterMap.values()));
                 int calculerIndexMeilleurCluster = candidat_retour.calculerIndexMeilleurCluster();
                 Cluster selectedCluster = clusterMap.get(calculerIndexMeilleurCluster);
-                if(candidat_retour.calculerDistancePoint(selectedCluster.getClusterCoordinates())<seuil*1.1){
+                if (candidat_retour.calculerDistancePoint(selectedCluster.getClusterCoordinates()) < seuil * 2.8) {
                     selectedCluster.getPlayers().add(candidat_retour);
                     corbeil.remove(candidat_retour);
                 }
             }
-
+            
             System.out.println(" clusterMap.size() -->" + clusterMap.size());
             // calculer lambda pour tout les clusters par joueur
             for (int l = 0; l < clusterMap.size(); l++) {
                 Cluster cluster = clusterMap.get(l);
-
+                
                 for (int m = 0; m < cluster.getPlayers().size(); m++) {
                     Player player = cluster.getPlayers().get(m);
                     final List<Cluster> clustersCollection = clusterMap.values().stream().collect(Collectors.toList());
                     //System.out.println("clustersCollection.size()  : " + clustersCollection.size());
                     player.calculerDistanceIntraCluster(clustersCollection);
-
+                    
                 };
             }
 
@@ -130,15 +131,15 @@ public class THJAlgorithm {
                 Cluster cluster = clusterMap.get(i);
                 for (int j = 0; j < cluster.getPlayers().size(); j++) {
                     Player player = cluster.getPlayers().get(j);
-
-                    final int calculerIndexMeilleurCluster = player.calculerIndexMeilleurCluster() ;
+                    
+                    final int calculerIndexMeilleurCluster = player.calculerIndexMeilleurCluster();
                     //System.out.println("calculerIndexMeilleurCluster    " + calculerIndexMeilleurCluster);
                     final List<Player> clusterMembers = clusterMap.get(calculerIndexMeilleurCluster).getPlayers();
                     //System.out.println(player + " ----- " + clusterMembers.size());
                     cluster.getPlayers().remove(player);
                     clusterMembers.add(player);
                     clusterMap.get(calculerIndexMeilleurCluster).setPlayers(clusterMembers);
-
+                    
                 }
             }
 
@@ -147,7 +148,7 @@ public class THJAlgorithm {
                 Cluster cluster = clusterMap.get(i);
                 try {
                     cluster.updateCentroid();
-
+                    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -161,60 +162,29 @@ public class THJAlgorithm {
                 corbeil.addAll(playerBeyondLimit);
                 cluster_courant.updateCentroid();
             }
-
+            
             for (int i = 0; i < clusterMap.size(); i++) {
                 Cluster cluster = clusterMap.get(i);
                 try {
                     cluster.updateCentroid();
-
+                    
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
-            //calculer WB
-            //  calculer ssw
-            double ssw = 0;
-            for (int i = 0; i < clusterMap.size(); i++) {
-                double sw = 0;
-                Cluster ci = clusterMap.get(i);
-                List<Float> cpi = ci.getClusterCoordinates();
-                final List<Player> joueursCI = ci.getPlayers();
-                for (int j = 0; j < joueursCI.size(); j++) {
-                    Player xi = joueursCI.get(j);
-                    sw += minus(xi.getAttributes(), cpi);
-                }
-                ssw += sw;
+            double wb = 0;
+            if (wbChoice) {
+                
+                wb = wbCalculation(k);
+            } else {
+                wb = daviesBouldin(k);
             }
-            //calculer ssb
-            Player x_ = new Player(matriceCSV.get(0).size());
-            for (int i = 0; i < matriceCSV.size(); i++) {
-                List<Float> joueur_i_attribut = matriceCSV.get(i);
-                List<Float> x_attribut = x_.getAttributes();
-                List<Float> x_temp = new ArrayList();
-
-                for (int j = 0; j < x_attribut.size(); j++) {
-                    x_temp.add(joueur_i_attribut.get(j) + x_attribut.get(j));
-                }
-                x_.setAttributes(x_temp);
-            }
-            x_.divideBy(matriceCSV.size());
-
-            double ssb = 0;
-            for (int i = 0; i < clusterMap.size(); i++) {
-                Cluster ci = clusterMap.get(i);
-                int ni = ci.getPlayers().size();
-                ssb += ni * minus(ci.getClusterCoordinates(), x_.getAttributes());
-            }
-
-            double wb = k * ssw / ssb;
-            //   System.out.println("wb(" + iteration + ") = " + wb);
-
+            
             if (wb < bestWB) {
-
+                
                 bestWB = wb;
                 bestMap = new Hashtable<>(clusterMap);
-
+                
             } else {
                 if (iteration == 2) {
                     bestMap.entrySet().stream().forEach((set) -> {
@@ -225,15 +195,15 @@ public class THJAlgorithm {
                 if ((int) (wb * 10) == (int) (bestWB * 10) && (bestWB < best_kCA)) {
                     state = false;
                 }
-
+                
             }
             nombre_iteration = iteration;
             if (wb > best_kCA) {
-                seuil-=moins;
-                System.out.println("nouveau seuil "+seuil);
+                seuil -= moins;
+                System.out.println("nouveau seuil " + seuil);
             }
         }
-
+        
         System.out.println("Best is " + bestWB);
         System.out.println("BEST MAP ***************************");
         bestMap.entrySet().stream().forEach((set) -> {
@@ -241,9 +211,48 @@ public class THJAlgorithm {
             //   System.out.println(" members  " + set.getValue());
         });
         System.out.println("BEST MAP ***************************");
-
+        
     }
-
+    
+    public double wbCalculation(int k) {
+        //calculer WB
+        //  calculer ssw
+        double ssw = 0;
+        for (int i = 0; i < clusterMap.size(); i++) {
+            double sw = 0;
+            Cluster ci = clusterMap.get(i);
+            List<Float> cpi = ci.getClusterCoordinates();
+            final List<Player> joueursCI = ci.getPlayers();
+            for (int j = 0; j < joueursCI.size(); j++) {
+                Player xi = joueursCI.get(j);
+                sw += minus(xi.getAttributes(), cpi);
+            }
+            ssw += sw;
+        }
+        //calculer ssb
+        Player x_ = new Player(matriceCSV.get(0).size());
+        for (int i = 0; i < matriceCSV.size(); i++) {
+            List<Float> joueur_i_attribut = matriceCSV.get(i);
+            List<Float> x_attribut = x_.getAttributes();
+            List<Float> x_temp = new ArrayList();
+            
+            for (int j = 0; j < x_attribut.size(); j++) {
+                x_temp.add(joueur_i_attribut.get(j) + x_attribut.get(j));
+            }
+            x_.setAttributes(x_temp);
+        }
+        x_.divideBy(matriceCSV.size());
+        double ssb = 0;
+        for (int i = 0; i < clusterMap.size(); i++) {
+            Cluster ci = clusterMap.get(i);
+            int ni = ci.getPlayers().size();
+            ssb += ni * minus(ci.getClusterCoordinates(), x_.getAttributes());
+        }
+        double wb = k * ssw / ssb;
+        //   System.out.println("wb(" + iteration + ") = " + wb);
+        return wb;
+    }
+    
     private double minus(List<Float> attributes, List<Float> cpi) {
         double result = 0;
         for (int i = 0; i < attributes.size(); i++) {
@@ -251,19 +260,84 @@ public class THJAlgorithm {
         }
         return result;
     }
-
+    
     public int getIteration() {
         return nombre_iteration;
     }
-
-  
-
+    
+    public void setWbCalculator() {
+        wbChoice = true;
+    }
+    
+    public void setDaviesBouldinCalculator() {
+        wbChoice = false;
+    }
+    
     public double getBestWB() {
         return bestWB;
     }
-
+    
     public Hashtable<Integer, Cluster> getBestMap() {
         return bestMap;
     }
-
+    
+    public double calculerD(int i) {
+        double di = Double.MIN_VALUE;
+        
+        for (int j = 0; j < clusterMap.size(); j++) {
+            if (i != j) {
+                Double calculerRij = calculerRij(i, j);
+                if (di < calculerRij) {
+                    di = calculerRij;
+                }
+            }
+        }
+        
+        return di;
+    }
+    
+    private double daviesBouldin(int k) {
+        
+        double DB = 0;
+        for (int i = 0; i < clusterMap.size(); i++) {
+            DB += calculerD(i);
+        }
+        
+        return DB / clusterMap.size();
+    }
+    
+    private Double calculerRij(int i, int j) {
+        double rij = 0;
+        
+        double sj = calculerS(j);
+        double si = calculerS(i);
+        double mij = calculerM(i, j);
+        
+        rij = (si + sj) / mij;
+        return rij;
+    }
+    
+    private double calculerS(int i) {
+        double si;
+        double somme = 0;
+        
+        Cluster clusterI = clusterMap.get(i);
+        List<Float> ai = clusterI.getClusterCoordinates();
+        final List<Player> membreClusterI = clusterI.getPlayers();
+        
+        for (int j = 0; j < membreClusterI.size(); j++) {
+            Player xj = membreClusterI.get(j);
+            somme+=Math.pow(Math.abs(minus(xj.getAttributes(), ai)),2);
+        }
+        si = Math.pow(somme/membreClusterI.size(), 1/2);
+        return si;
+    }
+    
+    private double calculerM(int i, int j) {
+        double mij = minus(clusterMap.get(i).getClusterCoordinates(), clusterMap.get(j).getClusterCoordinates()) ;
+        
+        
+        return mij;
+    }
+    
 }
