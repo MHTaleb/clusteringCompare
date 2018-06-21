@@ -51,7 +51,7 @@ public class THJAlgorithm {
     private int nombre_iteration;
     
     public void resolve(int k) {
-        int moins = seuil / 130;
+        int moins = seuil / 60;
         System.out.println("start");
         // creation de la population
         List<Player> players = new ArrayList<>();
@@ -98,7 +98,7 @@ public class THJAlgorithm {
         bestWB = Double.MAX_VALUE;
         bestMap = new Hashtable<>();
         boolean state = true;
-        for (int iteration = 0; iteration < 120 && state; iteration++) {
+        for (int iteration = 0; iteration < 50 && state; iteration++) {
 
             //vider la corbeil
             for (int i = 0; i < corbeil.size(); i++) {
@@ -106,7 +106,7 @@ public class THJAlgorithm {
                 candidat_retour.calculerDistanceIntraCluster(new ArrayList<>(clusterMap.values()));
                 int calculerIndexMeilleurCluster = candidat_retour.calculerIndexMeilleurCluster();
                 Cluster selectedCluster = clusterMap.get(calculerIndexMeilleurCluster);
-                if (candidat_retour.calculerDistancePoint(selectedCluster.getClusterCoordinates()) < seuil * 2.8) {
+                if (candidat_retour.calculerDistancePoint(selectedCluster.getClusterCoordinates()) < seuil * 1.3) {
                     selectedCluster.getPlayers().add(candidat_retour);
                     corbeil.remove(candidat_retour);
                 }
