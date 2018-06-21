@@ -165,7 +165,9 @@ public class FXMLController implements Initializable {
         indice.getItems().add("WB");
         indiceNonSupervise.getItems().add("Davies Bouldin");
         indiceNonSupervise.getItems().add("WB");
-        
+
+        indice.selectionModelProperty().bindBidirectional(indiceNonSupervise.selectionModelProperty());
+
         initializeChart();
         initializeTable();
 
@@ -375,7 +377,7 @@ public class FXMLController implements Initializable {
     void LancerSimulationcsv(ActionEvent event) {
         System.out.println("begin simulation");
         List<ClusteringDataPair> listeDesAttribusAvecValeur = null;
-
+        popTable.getItems().clear();
         // choix de collone du graphe
         final int PARAM_AFFICHAGE_1 = 3;
         final int PARAM_AFFICHAGE_2 = 5;
@@ -650,9 +652,14 @@ public class FXMLController implements Initializable {
         ca.resolve(k, 2);
 
         tit1e = "THJ";
-
-        THJAlgorithm thja = new THJAlgorithm(ca.getMatriceCSV(), 18000, ca.getWB());
-        if(indice.getSelectionModel().getSelectedItem().equals("Davies Bouldin")) thja.setDaviesBouldinCalculator();
+        double wb = ca.getWB();
+        if (indice.getSelectionModel().getSelectedItem().equals("Davies Bouldin")) {
+            wb = ca.getDaviesBouldin(k);
+        }
+        THJAlgorithm thja = new THJAlgorithm(ca.getMatriceCSV(), 18000, wb);
+        if (indice.getSelectionModel().getSelectedItem().equals("Davies Bouldin")) {
+            thja.setDaviesBouldinCalculator();
+        }
         thja.resolve(k);
 
         System.out.println("best wb for " + k + " is : " + thja.getBestWB());
@@ -835,27 +842,32 @@ public class FXMLController implements Initializable {
 
         List<ChaouchAlgorithm> cas = new ArrayList<>();
         List<THJAlgorithm> thjas = new ArrayList<>();
-         int iteration = 0;
+        int iteration = 0;
         long currentTimeMillis = System.currentTimeMillis();
         long timeFinal = 0;
         for (int i = 2; i <= nombreClasseNonSupervise.getValue(); i++) {
             ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
             ca.resolve(i, 2);
             cas.add(ca);
-
-            THJAlgorithm thja = new THJAlgorithm(ca.getMatriceCSV(), 12000, ca.getWB());
-            thja.setDaviesBouldinCalculator();
+            double wb = ca.getWB();
+            if (indice.getSelectionModel().getSelectedItem().equals("Davies Bouldin")) {
+                wb = ca.getDaviesBouldin(i);
+            }
+            THJAlgorithm thja = new THJAlgorithm(ca.getMatriceCSV(), 18000, wb);
+            if (indice.getSelectionModel().getSelectedItem().equals("Davies Bouldin")) {
+                thja.setDaviesBouldinCalculator();
+            }
             thja.resolve(i);
 
             thjas.add(thja);
 
-            chartNonSuperviseThj.getData().get(0).getData().add(new XYChart.Data<>(i,thja.getBestWB()));
-            chartNonSuperviseThj.getData().get(1).getData().add(new XYChart.Data<>(i,ca.getDaviesBouldin(i)));
-            iteration += thja.getIteration() ;
+            chartNonSuperviseThj.getData().get(0).getData().add(new XYChart.Data<>(i, thja.getBestWB()));
+            chartNonSuperviseThj.getData().get(1).getData().add(new XYChart.Data<>(i, ca.getDaviesBouldin(i)));
+            iteration += thja.getIteration();
             long time = System.currentTimeMillis();
-            timeFinal = (time - currentTimeMillis )/1000;
-            chartNonSuperviseThj.setTitle("nombre d iteration : "+iteration+""
-                    + "\n temp totla "+timeFinal+ " s");
+            timeFinal = (time - currentTimeMillis) / 1000;
+            chartNonSuperviseThj.setTitle("nombre d iteration : " + iteration + ""
+                    + "\n temp totla " + timeFinal + " s");
 
         }
         chartNonSuperviseThj.autosize();

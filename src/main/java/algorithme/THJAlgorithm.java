@@ -51,7 +51,7 @@ public class THJAlgorithm {
     private int nombre_iteration;
     
     public void resolve(int k) {
-        int moins = seuil / 120;
+        int moins = seuil / 130;
         System.out.println("start");
         // creation de la population
         List<Player> players = new ArrayList<>();
@@ -157,10 +157,13 @@ public class THJAlgorithm {
             //Corbeil
             // remplir corbeil
             for (int i = 0; i < clusterMap.size(); i++) {
+                if(corbeil.size()<matriceCSV.size()/(10-k)){
+                    
                 Cluster cluster_courant = clusterMap.get(i);
                 List<Player> playerBeyondLimit = cluster_courant.getPlayerBeyondLimit(seuil);
                 corbeil.addAll(playerBeyondLimit);
                 cluster_courant.updateCentroid();
+                }
             }
             
             for (int i = 0; i < clusterMap.size(); i++) {
@@ -255,8 +258,13 @@ public class THJAlgorithm {
     
     private double minus(List<Float> attributes, List<Float> cpi) {
         double result = 0;
+        try {
         for (int i = 0; i < attributes.size(); i++) {
             result += Math.pow(attributes.get(i) - cpi.get(i), 2);
+        }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return result;
     }
