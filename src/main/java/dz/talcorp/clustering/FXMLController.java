@@ -866,6 +866,38 @@ public class FXMLController implements Initializable {
                     + "\n temp totla " + timeFinal + " s");
 
         }
+        
+        THJAlgorithm bestTHJ = null;
+        double bestWB = Double.MAX_VALUE;
+        for (THJAlgorithm thja : thjas) {
+            if(bestWB > thja.getBestWB()){
+                bestWB = thja.getBestWB();
+                bestTHJ = thja;
+            }
+        }
+        
+        if(bestTHJ != null){
+            List<ClusterPoint> centroids = new ArrayList();
+            List<ClusterPoint> points= new ArrayList();
+            
+            Hashtable<Integer, Cluster> bestMap = bestTHJ.getBestMap();
+            for (int i = 0; i < bestMap.size(); i++) {
+                Cluster cluster = bestMap.get(i);
+                final ClusterPoint clusterPointCenter = new ClusterPoint(cluster.getClusterCoordinates().get(PARAM_AFFICHAGE_1), cluster.getClusterCoordinates().get(PARAM_AFFICHAGE_2));
+                clusterPointCenter.setCurrentCluster(i);
+                centroids.add(clusterPointCenter);
+                
+                List<Player> players = cluster.getPlayers();
+                for (int j = 0; j < players.size(); j++) {
+                    Player player = players.get(j);
+                    final ClusterPoint clusterPoint = new ClusterPoint(player.getAttributes().get(PARAM_AFFICHAGE_1), player.getAttributes().get(PARAM_AFFICHAGE_2));
+                    clusterPoint.setCurrentCluster(i);
+                    points.add(clusterPoint);
+                }
+            }
+            drawChart(bestTHJ.getIteration(), centroids, points, chartNonSuperviseKmeans);
+            
+        }
         chartNonSuperviseThj.autosize();
         chartNonSuperviseKmeans.autosize();
 
