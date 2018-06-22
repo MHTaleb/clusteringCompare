@@ -35,6 +35,7 @@ public class THJAlgorithm {
     
     private final Hashtable<Integer, Cluster> clusterMap;
     private final double best_kCA;
+    private int nombreMaxItere = 500;
     
     public THJAlgorithm(List<List<Float>> matriceCSV, int seuil, double best_kCA) {
         //this.currentCentroid = new ArrayList();
@@ -51,7 +52,7 @@ public class THJAlgorithm {
     private int nombre_iteration;
     
     public void resolve(int k) {
-        int moins = seuil / 500;
+        int moins = seuil / nombreMaxItere;
         System.out.println("start");
         // creation de la population
         List<Player> players = new ArrayList<>();
@@ -99,7 +100,7 @@ public class THJAlgorithm {
         bestWB = Double.MAX_VALUE;
         bestMap = new Hashtable<>();
         boolean state = true;
-        for (int iteration = 0; iteration < 500 && state; iteration++) {
+        for (int iteration = 0; iteration < nombreMaxItere && state; iteration++) {
 
             //vider la corbeil
             for (int i = 0; i < corbeil.size(); i++) {
@@ -130,6 +131,7 @@ public class THJAlgorithm {
             // chaque joueur decide de rester ou d aller a un autre cluster celon la distance moyenne intra lui et les membres de chaque cluster ( virer ou inscrire )
             for (int i = 0; i < clusterMap.size(); i++) {
                 Cluster cluster = clusterMap.get(i);
+                System.out.println("calcul de meilleur indice");
                 for (int j = 0; j < cluster.getPlayers().size(); j++) {
                     Player player = cluster.getPlayers().get(j);
                     
@@ -348,6 +350,10 @@ public class THJAlgorithm {
         
         
         return mij;
+    }
+
+    public void setNombreiterationMax(int nombreIteration) {
+        this.nombreMaxItere = nombreIteration;
     }
     
 }

@@ -17,10 +17,13 @@ import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTextField;
 import entity.ClusterPoint;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +58,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javax.imageio.ImageIO;
 import tools.ImageToCSVConverter;
 
 public class FXMLController implements Initializable {
@@ -648,7 +652,7 @@ public class FXMLController implements Initializable {
     private void algorithmTHJ(List<ClusteringDataPair> listeDesAttribusAvecValeur, int valeurG, int PARAM_AFFICHAGE_1, int PARAM_AFFICHAGE_2) {
 
         long start = System.currentTimeMillis();
-        
+
         int k = (int) nombreClusterDiabete.getValue();
         ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
         ca.resolve(k, 2);
@@ -748,10 +752,10 @@ public class FXMLController implements Initializable {
             chartCSVBruit.dataProperty().get().add(seriesBruit);
 
         }
-        long end = (System.currentTimeMillis()-start)/1000;
+        long end = (System.currentTimeMillis() - start) / 1000;
         ///affichage final
         drawChart(thja.getIteration(), centroids, points, chartCSV);
-        chartCSV.setTitle("nombre d iteration " +thja.getIteration()+" \n temps d execution "+end+" s");
+        chartCSV.setTitle("nombre d iteration " + thja.getIteration() + " \n temps d execution " + end + " s");
         /// affichage tableau
         List<Integer> classesAlgorithme = new ArrayList();
 
@@ -836,8 +840,8 @@ public class FXMLController implements Initializable {
         listeDesAttribusAvecValeur = csvpb.getClusteringDataColumn();
 
         // choix de collone du graphe
-        final int PARAM_AFFICHAGE_1 = 3;
-        final int PARAM_AFFICHAGE_2 = 5;
+        final int PARAM_AFFICHAGE_1 = 2;
+        final int PARAM_AFFICHAGE_2 = 1;
 
         List<ChaouchAlgorithm> cas = new ArrayList<>();
         List<THJAlgorithm> thjas = new ArrayList<>();
@@ -848,11 +852,14 @@ public class FXMLController implements Initializable {
             ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
             ca.resolve(i, 2);
             cas.add(ca);
+            System.out.println("ca rendred starting thj");
             double wb = ca.getWB();
-            THJAlgorithm thja = new THJAlgorithm(ca.getMatriceCSV(), 18000, wb);
+            THJAlgorithm thja = new THJAlgorithm(ca.getMatriceCSV(), 4000, wb);
             if (indice.getSelectionModel().getSelectedItem().equals("Davies Bouldin")) {
                 thja.setDaviesBouldinCalculator();
+                System.out.println("using dbi");
             }
+            thja.setNombreiterationMax(80);
             thja.resolve(i);
 
             thjas.add(thja);
@@ -866,27 +873,27 @@ public class FXMLController implements Initializable {
                     + "\n temp totla " + timeFinal + " s");
 
         }
-        
+
         THJAlgorithm bestTHJ = null;
         double bestWB = Double.MAX_VALUE;
         for (THJAlgorithm thja : thjas) {
-            if(bestWB > thja.getBestWB()){
+            if (bestWB > thja.getBestWB()) {
                 bestWB = thja.getBestWB();
                 bestTHJ = thja;
             }
         }
-        
-        if(bestTHJ != null){
+
+        if (bestTHJ != null) {
             List<ClusterPoint> centroids = new ArrayList();
-            List<ClusterPoint> points= new ArrayList();
-            
+            List<ClusterPoint> points = new ArrayList();
+
             Hashtable<Integer, Cluster> bestMap = bestTHJ.getBestMap();
             for (int i = 0; i < bestMap.size(); i++) {
                 Cluster cluster = bestMap.get(i);
                 final ClusterPoint clusterPointCenter = new ClusterPoint(cluster.getClusterCoordinates().get(PARAM_AFFICHAGE_1), cluster.getClusterCoordinates().get(PARAM_AFFICHAGE_2));
                 clusterPointCenter.setCurrentCluster(i);
                 centroids.add(clusterPointCenter);
-                
+
                 List<Player> players = cluster.getPlayers();
                 for (int j = 0; j < players.size(); j++) {
                     Player player = players.get(j);
@@ -896,7 +903,11 @@ public class FXMLController implements Initializable {
                 }
             }
             drawChart(bestTHJ.getIteration(), centroids, points, chartNonSuperviseKmeans);
-            
+
+            if (ImageCheck.isSelected()) {
+                drawImage(points);
+            }
+
         }
         chartNonSuperviseThj.autosize();
         chartNonSuperviseKmeans.autosize();
@@ -953,6 +964,56 @@ public class FXMLController implements Initializable {
         Image image = new Image(input);
         imageView.setImage(image);
         csvMapsnonSupervise.getChildren().add(imageView);
+    }
+
+    private void drawImage(List<ClusterPoint> points) throws IOException {
+        int image_width = Integer.parseInt(widthImage.getText().trim());
+        int image_height = Integer.parseInt(heighImage.getText().trim());
+        BufferedImage bi = new BufferedImage(image_width, image_height, BufferedImage.TYPE_INT_ARGB);
+        File myNewJPegFile = new File("ImageAsJPeg.jpg");
+        for (int i = 0; i < image_width; i++) {
+            for (int j = 0; j < image_height; j++) {
+                try {
+                    int playerID = image_height * i + j;
+                    int currentCluster = points.get(playerID).getCurrentCluster();
+                    Color c = new Color(100, 120, 130);
+                    switch (currentCluster) {
+                        case 0:
+                            c = new Color(20, 120, 210);
+                            break;
+                        case 1:
+                            c = new Color(180, 20, 130);
+                            break;
+                        case 2:
+                            c = new Color(20, 200, 13);
+                            break;
+                        case 3:
+                            c = new Color(220, 70, 13);
+                            break;
+                        case 4:
+                            c = new Color(90, 170, 213);
+                            break;
+                        case 5:
+                            c = new Color(2, 30, 113);
+                            break;
+                        case 6:
+                            c = new Color(20, 7, 183);
+                            break;
+                        case 7:
+                            c = new Color(127, 170, 133);
+                            break;
+                    }
+                    
+                    bi.setRGB(i, j, c.getRGB());
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+            ImageIO.write(bi, "jpg", myNewJPegFile);
+            imageView.setImage(new Image(new FileInputStream(myNewJPegFile) ));
+
     }
 
     private static class DistanceCBD {

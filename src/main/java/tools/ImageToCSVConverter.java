@@ -62,6 +62,7 @@ public class ImageToCSVConverter {
                     headers.add("RED");
                     headers.add("GREEN");
                     headers.add("BLUE");
+                    headers.add("class");
 
                     for (int i = 0; i < readImage.getHeight(); i++) { // ligne indice
                         for (int j = 0; j < colonsSize; j++) { // collone indice
@@ -70,6 +71,7 @@ public class ImageToCSVConverter {
                         ligne.add(c.getRed());
                         ligne.add(c.getGreen());
                         ligne.add(c.getBlue());
+                        ligne.add(0);
                         matriceCSV.add(ligne);
                         }
                     }

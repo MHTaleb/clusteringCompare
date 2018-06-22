@@ -111,7 +111,7 @@ public class ChaouchAlgorithm {
             System.out.println("processing");
         } while (!isSame(currentClasses, previousClasses));
         currentClasses.stream().forEach(classes::add);
-        long end = System.currentTimeMillis() - start;
+        long end = (System.currentTimeMillis() - start)/1000;
         System.out.println("end of clustering " + end + " seconds and " + loop + " repeats");
     }
 
@@ -149,6 +149,7 @@ public class ChaouchAlgorithm {
     }
 
     public double getWB() {
+        System.out.println("getting wb for ca");
         double wb = 0;
         //ssw
         double ssw = 0;
@@ -157,6 +158,7 @@ public class ChaouchAlgorithm {
             List<Float> ci = currentCentroid.get(classes.get(i));
             ssw += minus(xi, ci);
         }
+        System.out.println("ssw");
         //x_
         List<Float> x_ = new ArrayList<>();
         //init
@@ -173,6 +175,7 @@ public class ChaouchAlgorithm {
             x_.set(i, x_.get(i) / matriceCSV.size());
         }
         //ssb
+        System.out.println("ssb");
         double ssb = 0;
         for (int i = 0; i < currentCentroid.size(); i++) {
             //ni de ci
@@ -186,6 +189,7 @@ public class ChaouchAlgorithm {
             List<Float> ci = currentCentroid.get(i);
             ssb += ni * minus(ci, x_);
         }
+        System.out.println("wb");
         wb = currentCentroid.size() * ssw / ssb;
         return wb;
     }

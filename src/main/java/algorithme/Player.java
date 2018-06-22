@@ -81,7 +81,7 @@ public class Player {
                 winnerValue = curentDistance;
             }
         }
-        System.out.println("winner index = "+winnerIndex+" winner value = "+winnerValue+"  player = "+name);
+       // System.out.println("winner index = "+winnerIndex+" winner value = "+winnerValue+"  player = "+name);
         return winnerIndex;
     }
 
