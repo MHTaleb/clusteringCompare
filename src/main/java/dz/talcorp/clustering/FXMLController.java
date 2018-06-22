@@ -647,6 +647,8 @@ public class FXMLController implements Initializable {
 
     private void algorithmTHJ(List<ClusteringDataPair> listeDesAttribusAvecValeur, int valeurG, int PARAM_AFFICHAGE_1, int PARAM_AFFICHAGE_2) {
 
+        long start = System.currentTimeMillis();
+        
         int k = (int) nombreClusterDiabete.getValue();
         ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
         ca.resolve(k, 2);
@@ -749,10 +751,10 @@ public class FXMLController implements Initializable {
             chartCSVBruit.dataProperty().get().add(seriesBruit);
 
         }
-
+        long end = (System.currentTimeMillis()-start)/1000;
         ///affichage final
         drawChart(thja.getIteration(), centroids, points, chartCSV);
-
+        chartCSV.setTitle("nombre d iteration " +thja.getIteration()+" \n temps d execution "+end+" s");
         /// affichage tableau
         List<Integer> classesAlgorithme = new ArrayList();
 

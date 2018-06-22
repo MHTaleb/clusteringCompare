@@ -51,7 +51,7 @@ public class THJAlgorithm {
     private int nombre_iteration;
     
     public void resolve(int k) {
-        int moins = seuil / 60;
+        int moins = seuil / 301;
         System.out.println("start");
         // creation de la population
         List<Player> players = new ArrayList<>();
@@ -98,7 +98,7 @@ public class THJAlgorithm {
         bestWB = Double.MAX_VALUE;
         bestMap = new Hashtable<>();
         boolean state = true;
-        for (int iteration = 0; iteration < 50 && state; iteration++) {
+        for (int iteration = 0; iteration < 300 && state; iteration++) {
 
             //vider la corbeil
             for (int i = 0; i < corbeil.size(); i++) {
