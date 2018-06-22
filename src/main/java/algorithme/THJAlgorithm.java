@@ -51,7 +51,7 @@ public class THJAlgorithm {
     private int nombre_iteration;
     
     public void resolve(int k) {
-        int moins = seuil / 301;
+        int moins = seuil / 500;
         System.out.println("start");
         // creation de la population
         List<Player> players = new ArrayList<>();
@@ -95,10 +95,11 @@ public class THJAlgorithm {
         }
         //-------------
 
+        int limitCorbeil = 50;
         bestWB = Double.MAX_VALUE;
         bestMap = new Hashtable<>();
         boolean state = true;
-        for (int iteration = 0; iteration < 300 && state; iteration++) {
+        for (int iteration = 0; iteration < 500 && state; iteration++) {
 
             //vider la corbeil
             for (int i = 0; i < corbeil.size(); i++) {
@@ -157,7 +158,7 @@ public class THJAlgorithm {
             //Corbeil
             // remplir corbeil
             for (int i = 0; i < clusterMap.size(); i++) {
-                if(corbeil.size()<matriceCSV.size()/(10-k)){
+                if(corbeil.size()<limitCorbeil){
                     
                 Cluster cluster_courant = clusterMap.get(i);
                 List<Player> playerBeyondLimit = cluster_courant.getPlayerBeyondLimit(seuil);
@@ -195,7 +196,7 @@ public class THJAlgorithm {
                         //  System.out.println("\n members iteration 2   " + set.getValue());
                     });
                 }
-                if ((int) (wb * 10) == (int) (bestWB * 10) && (bestWB < best_kCA) && (iteration > 10)) {
+                if ((int) (wb * 10) == (int) (bestWB * 10) && (bestWB < best_kCA) && (iteration > 20)) {
                     state = false;
                 }
                 
@@ -203,6 +204,7 @@ public class THJAlgorithm {
             nombre_iteration = iteration;
             if (wb > best_kCA) {
                 seuil -= moins;
+                limitCorbeil++;
                 System.out.println("nouveau seuil " + seuil);
             }
         }
