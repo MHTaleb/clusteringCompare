@@ -106,7 +106,7 @@ public class THJAlgorithm {
                 candidat_retour.calculerDistanceIntraCluster(new ArrayList<>(clusterMap.values()));
                 int calculerIndexMeilleurCluster = candidat_retour.calculerIndexMeilleurCluster();
                 Cluster selectedCluster = clusterMap.get(calculerIndexMeilleurCluster);
-                if (candidat_retour.calculerDistancePoint(selectedCluster.getClusterCoordinates()) < seuil * 1.3) {
+                if (candidat_retour.calculerDistancePoint(selectedCluster.getClusterCoordinates()) < seuil * 2.3) {
                     selectedCluster.getPlayers().add(candidat_retour);
                     corbeil.remove(candidat_retour);
                 }
@@ -195,7 +195,7 @@ public class THJAlgorithm {
                         //  System.out.println("\n members iteration 2   " + set.getValue());
                     });
                 }
-                if ((int) (wb * 10) == (int) (bestWB * 10) && (bestWB < best_kCA)) {
+                if ((int) (wb * 10) == (int) (bestWB * 10) && (bestWB < best_kCA) && (iteration > 10)) {
                     state = false;
                 }
                 

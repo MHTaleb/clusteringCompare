@@ -655,9 +655,6 @@ public class FXMLController implements Initializable {
 
         tit1e = "THJ";
         double wb = ca.getWB();
-        if (indice.getSelectionModel().getSelectedItem().equals("Davies Bouldin")) {
-            wb = ca.getDaviesBouldin(k);
-        }
         THJAlgorithm thja = new THJAlgorithm(ca.getMatriceCSV(), 18000, wb);
         if (indice.getSelectionModel().getSelectedItem().equals("Davies Bouldin")) {
             thja.setDaviesBouldinCalculator();
@@ -852,9 +849,6 @@ public class FXMLController implements Initializable {
             ca.resolve(i, 2);
             cas.add(ca);
             double wb = ca.getWB();
-            if (indice.getSelectionModel().getSelectedItem().equals("Davies Bouldin")) {
-                wb = ca.getDaviesBouldin(i);
-            }
             THJAlgorithm thja = new THJAlgorithm(ca.getMatriceCSV(), 18000, wb);
             if (indice.getSelectionModel().getSelectedItem().equals("Davies Bouldin")) {
                 thja.setDaviesBouldinCalculator();
@@ -864,7 +858,7 @@ public class FXMLController implements Initializable {
             thjas.add(thja);
 
             chartNonSuperviseThj.getData().get(0).getData().add(new XYChart.Data<>(i, thja.getBestWB()));
-            chartNonSuperviseThj.getData().get(1).getData().add(new XYChart.Data<>(i, ca.getDaviesBouldin(i)));
+            chartNonSuperviseThj.getData().get(1).getData().add(new XYChart.Data<>(i, ca.getWB()));
             iteration += thja.getIteration();
             long time = System.currentTimeMillis();
             timeFinal = (time - currentTimeMillis) / 1000;
