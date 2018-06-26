@@ -56,6 +56,8 @@ public class Player {
         for (int i = 0; i < clusters.size(); i++) {
             float distanceMoyenne = 0;
             Cluster currentCluster = clusters.get(i);
+            if(currentCluster != null){
+                
             int currentClusterSize = currentCluster.getPlayers().size() ;
             for (Player player : clusters.get(i).getPlayers()) {
                 float distance = 0;
@@ -67,6 +69,7 @@ public class Player {
             final float capital = distanceMoyenne / currentClusterSize;
             //  System.out.println(name+" capital avec "+i+" = "+capital);
             distancesIntraCluster.add(i,capital);
+            }
         }
     }
 

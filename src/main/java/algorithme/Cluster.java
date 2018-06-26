@@ -25,11 +25,17 @@ public class Cluster {
  
         this.vitrine = new ArrayList();
     }
+    public Cluster(){
+        this.clusterCoordinates = new ArrayList<>();
+        this.players = new ArrayList();
+        this.vitrine = new ArrayList();
+    }
 
     public Cluster(List<Float> clusterCoordinate) {
        
         this.clusterCoordinates = clusterCoordinate;
         this.vitrine = new ArrayList();
+        players = new ArrayList<>();
     }
 
     public void setPlayers(List<Player> players) {
@@ -61,15 +67,17 @@ public class Cluster {
 
     //error here
     public void updateCentroid() {
-        this.clusterCoordinates = new ArrayList();
  
-        if( players.size()>0)for(int i = 0 ; i< players.get(0).getAttributes().size();i++){
+        if( players.size()>0){
+            this.clusterCoordinates = new ArrayList();
+            for(int i = 0 ; i< players.get(0).getAttributes().size();i++){
             float att = 0;
             for(int j=0 ; j<players.size();j++){
                 att+=players.get(j).getAttributes().get(i);
             }
             att/=players.size();
             clusterCoordinates.add(att);
+        }
         }
        
 

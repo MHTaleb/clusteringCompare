@@ -5,15 +5,12 @@
  */
 package algorithme;
 
-import dz.talcorp.clustering.PFEDataFormator;
 import entity.ClusterPoint;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -186,4 +183,155 @@ public class GameTheoryResolver {
         return pairResults;
     }
 
+    public List<Integer> getClasses(){
+        List<Integer> classes  = new ArrayList();
+        
+        
+        for (int i = 0; i < pairResults.size(); i++) {
+            classes.add(pairResults.get(i).getDetectedCluster());
+        }
+        
+        return classes;
+    }
+    
+    private double minus(List<Float> attributes, List<Float> cpi) {
+        double result = 0;
+        try {
+        for (int i = 0; i < attributes.size(); i++) {
+            result += Math.pow(attributes.get(i) - cpi.get(i), 2);
+        }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+    private  Hashtable<Integer, Cluster> clusterMap;
+    
+    private void init(){
+        clusterMap = new Hashtable<>();
+        // remplir tout les element dans leur class respective
+        // si la class n existe pas creer class sinon remplir
+        List<Integer> listeDesClasses = getClasses();
+        for (int i = 0; i < matriceCSV.size(); i++) {
+            List<Float> playerI = matriceCSV.get(i);
+            Integer indicePlayerI = listeDesClasses.get(i);
+            if(!clusterMap.containsKey(indicePlayerI)){
+                clusterMap.put(indicePlayerI, new Cluster());
+            }
+            clusterMap.get(indicePlayerI).getPlayers().add(new Player(""+i, playerI));
+        }
+        for (int i = 0; i < clusterMap.size(); i++) {
+            clusterMap.get(i).updateCentroid();
+        }
+        
+    }
+    
+    private double daviesBouldin(int k) {
+    
+        init();
+        
+        double DB = 0;
+        for (int i = 0; i < clusterMap.size(); i++) {
+            DB += calculerD(i);
+        }
+        
+        return DB / clusterMap.size();
+    }
+    
+     public double calculerD(int i) {
+        double di = Double.MIN_VALUE;
+        
+        for (int j = 0; j < clusterMap.size(); j++) {
+            if (i != j) {
+                Double calculerRij = calculerRij(i, j);
+                if (di < calculerRij) {
+                    di = calculerRij;
+                }
+            }
+        }
+        
+        return di;
+    }
+    
+     
+    private Double calculerRij(int i, int j) {
+        double rij = 0;
+        
+        double sj = calculerS(j);
+        double si = calculerS(i);
+        double mij = calculerM(i, j);
+        
+        rij = (si + sj) / mij;
+        return rij;
+    }
+    
+    private double calculerS(int i) {
+        double si;
+        double somme = 0;
+        
+        Cluster clusterI = clusterMap.get(i);
+        List<Float> ai = clusterI.getClusterCoordinates();
+        final List<Player> membreClusterI = clusterI.getPlayers();
+        
+        for (int j = 0; j < membreClusterI.size(); j++) {
+            Player xj = membreClusterI.get(j);
+            somme+=Math.pow(Math.abs(minus(xj.getAttributes(), ai)),2);
+        }
+        si = Math.pow(somme/membreClusterI.size(), 1/2);
+        return si;
+    }
+    
+    private double calculerM(int i, int j) {
+        double mij = minus(clusterMap.get(i).getClusterCoordinates(), clusterMap.get(j).getClusterCoordinates()) ;
+        
+        
+        return mij;
+    }
+
+    
+    public double wbCalculation(int k) {
+    
+        init();
+        
+        //calculer WB
+        //  calculer ssw
+        double ssw = 0;
+        for (int i = 0; i < clusterMap.size(); i++) {
+            double sw = 0;
+            Cluster ci = clusterMap.get(i);
+            List<Float> cpi = ci.getClusterCoordinates();
+            final List<Player> joueursCI = ci.getPlayers();
+            for (int j = 0; j < joueursCI.size(); j++) {
+                Player xi = joueursCI.get(j);
+                sw += minus(xi.getAttributes(), cpi);
+            }
+            ssw += sw;
+        }
+        //calculer ssb
+        Player x_ = new Player(matriceCSV.get(0).size());
+        for (int i = 0; i < matriceCSV.size(); i++) {
+            List<Float> joueur_i_attribut = matriceCSV.get(i);
+            List<Float> x_attribut = x_.getAttributes();
+            List<Float> x_temp = new ArrayList();
+            
+            for (int j = 0; j < x_attribut.size(); j++) {
+                x_temp.add(joueur_i_attribut.get(j) + x_attribut.get(j));
+            }
+            x_.setAttributes(x_temp);
+        }
+        x_.divideBy(matriceCSV.size());
+        double ssb = 0;
+        for (int i = 0; i < clusterMap.size(); i++) {
+            Cluster ci = clusterMap.get(i);
+            int ni = ci.getPlayers().size();
+            ssb += ni * minus(ci.getClusterCoordinates(), x_.getAttributes());
+        }
+        double wb = k * ssw / ssb;
+        //   System.out.println("wb(" + iteration + ") = " + wb);
+        return wb;
+    }
+    
+    
+    
 }

@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -487,8 +486,8 @@ public class FXMLController implements Initializable {
             for (int j = 0; j < centersPrevious.size(); j++) {
                 //if (Objects.equals(centersPrevious.get(j), classesAlgorithme.get(j)) && centersPrevious.get(j) == i) {
                 if (classesAlgorithme.get(j) == i) {
-                    final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1).getColumnPoints().get(j).getValue();
-                    final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2).getColumnPoints().get(j).getValue();
+                    final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1%listeDesAttribusAvecValeur.size()).getColumnPoints().get(j).getValue();
+                    final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2%listeDesAttribusAvecValeur.size()).getColumnPoints().get(j).getValue();
                     System.out.println("x = " + x + "   y = " + y + "  clust");
                     observableArrayList.add(new XYChart.Data<>(Double.valueOf(x), Double.valueOf(y)));
                 }
@@ -502,8 +501,8 @@ public class FXMLController implements Initializable {
 
             for (int j = 0; j < centersPrevious.size(); j++) {
                 if (centersPrevious.get(j) == i) {
-                    final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1).getColumnPoints().get(j).getValue();
-                    final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2).getColumnPoints().get(j).getValue();
+                    final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1%listeDesAttribusAvecValeur.size()).getColumnPoints().get(j).getValue();
+                    final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2%listeDesAttribusAvecValeur.size()).getColumnPoints().get(j).getValue();
                     System.out.println("x = " + x + "   y = " + y + "  noise");
                     observableArrayListBruit.add(new XYChart.Data<>(Double.valueOf(x), Double.valueOf(y)));
                 }
@@ -521,8 +520,8 @@ public class FXMLController implements Initializable {
                     System.out.println("centersPrevious.get(j).intValue() " + centersPrevious.get(j).intValue());
                     System.out.println("classesAlgorithme.get(j).intValue() " + classesAlgorithme.get(j).intValue());
                     if (centersPrevious.get(j).intValue() != classesAlgorithme.get(j).intValue()) {
-                        final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1).getColumnPoints().get(j).getValue();
-                        final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2).getColumnPoints().get(j).getValue();
+                        final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1%listeDesAttribusAvecValeur.size()).getColumnPoints().get(j).getValue();
+                        final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2%listeDesAttribusAvecValeur.size()).getColumnPoints().get(j).getValue();
                         System.out.println("x = " + x + "   y = " + y + "  noise");
                         observableArrayListBruitReel.add(new XYChart.Data<>(Double.valueOf(x), Double.valueOf(y)));
                     }
@@ -596,7 +595,7 @@ public class FXMLController implements Initializable {
                 String node = (String) pfeDataFormator.getClassifications().get(i).get(j);
                 int nodeIndex = Integer.parseInt(node.replace("node", ""));
 
-                observableArrayList.add(new XYChart.Data<>(Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1).getColumnPoints().get(nodeIndex).getValue()), Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2).getColumnPoints().get(nodeIndex).getValue())));
+                observableArrayList.add(new XYChart.Data<>(Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1%listeDesAttribusAvecValeur.size()).getColumnPoints().get(nodeIndex).getValue()), Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2%listeDesAttribusAvecValeur.size()).getColumnPoints().get(nodeIndex).getValue())));
             }
 
             final XYChart.Series<Number, Number> series = new XYChart.Series<>(observableArrayList);
@@ -609,7 +608,7 @@ public class FXMLController implements Initializable {
                 String node = (String) pfeDataFormator.getClassificationBenchMark().get(i).get(j);
                 int nodeIndex = Integer.parseInt(node.replace("node", "")) - 1;
                 System.out.println("node index " + nodeIndex + " noise");
-                observableArrayListBruit.add(new XYChart.Data<>(Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1).getColumnPoints().get(nodeIndex).getValue()), Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2).getColumnPoints().get(nodeIndex).getValue())));
+                observableArrayListBruit.add(new XYChart.Data<>(Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1%listeDesAttribusAvecValeur.size()).getColumnPoints().get(nodeIndex).getValue()), Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2%listeDesAttribusAvecValeur.size()).getColumnPoints().get(nodeIndex).getValue())));
             }
 
             final XYChart.Series<Number, Number> seriesBruit = new XYChart.Series<>(observableArrayListBruit);
@@ -624,7 +623,7 @@ public class FXMLController implements Initializable {
                 int nodeIndex = Integer.parseInt(node.replace("node", "")) - 1;
                 System.out.println("node index " + nodeIndex + " noise");
                 if (contains) {
-                    observableArrayListBruitReel.add(new XYChart.Data<>(Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1).getColumnPoints().get(nodeIndex).getValue()), Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2).getColumnPoints().get(nodeIndex).getValue())));
+                    observableArrayListBruitReel.add(new XYChart.Data<>(Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1%listeDesAttribusAvecValeur.size()).getColumnPoints().get(nodeIndex).getValue()), Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2%listeDesAttribusAvecValeur.size()).getColumnPoints().get(nodeIndex).getValue())));
                 }
             }
 
@@ -678,9 +677,9 @@ public class FXMLController implements Initializable {
             Cluster cluster = bestMap.get(j);
             System.out.println("cluster members size = " + cluster.getPlayers().size());
             List<Float> clusterCoordinates = cluster.getClusterCoordinates();
-            centroids.add(new ClusterPoint(clusterCoordinates.get(PARAM_AFFICHAGE_1), clusterCoordinates.get(PARAM_AFFICHAGE_2)));
+            centroids.add(new ClusterPoint(clusterCoordinates.get(PARAM_AFFICHAGE_1%listeDesAttribusAvecValeur.size()), clusterCoordinates.get(PARAM_AFFICHAGE_2%listeDesAttribusAvecValeur.size())));
             for (Player player : cluster.getPlayers()) {
-                final ClusterPoint playerPoint = new ClusterPoint(player.getAttributes().get(PARAM_AFFICHAGE_1), player.getAttributes().get(PARAM_AFFICHAGE_2));
+                final ClusterPoint playerPoint = new ClusterPoint(player.getAttributes().get(PARAM_AFFICHAGE_1%listeDesAttribusAvecValeur.size()), player.getAttributes().get(PARAM_AFFICHAGE_2%listeDesAttribusAvecValeur.size()));
                 playerPoint.setCurrentCluster(i);
                 playerPoint.setPlayerIndex(player.getName());
                 points.add(playerPoint);
@@ -712,8 +711,8 @@ public class FXMLController implements Initializable {
 
             for (int j = 0; j < centersPrevious.size(); j++) {
                 if (centersPrevious.get(j) == l) {
-                    final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1).getColumnPoints().get(j).getValue();
-                    final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2).getColumnPoints().get(j).getValue();
+                    final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1%listeDesAttribusAvecValeur.size()).getColumnPoints().get(j).getValue();
+                    final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2%listeDesAttribusAvecValeur.size()).getColumnPoints().get(j).getValue();
                     System.out.println("x = " + x + "   y = " + y + "  noise");
                     observableArrayListBruit.add(new XYChart.Data<>(Double.valueOf(x), Double.valueOf(y)));
                 }
@@ -737,8 +736,8 @@ public class FXMLController implements Initializable {
                 try {
 
                     if (centersPrevious.get(j) == l && centersPrevious.get(j) == points.stream().filter(prdct).findFirst().get().getCurrentCluster()) {
-                        final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1).getColumnPoints().get(j).getValue();
-                        final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2).getColumnPoints().get(j).getValue();
+                        final Float x = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1%listeDesAttribusAvecValeur.size()).getColumnPoints().get(j).getValue();
+                        final Float y = listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2%listeDesAttribusAvecValeur.size()).getColumnPoints().get(j).getValue();
                         System.out.println("x = " + x + "   y = " + y + "  noise");
                         observableArrayListBruit.add(new XYChart.Data<>(Double.valueOf(x), Double.valueOf(y)));
                     }
@@ -854,12 +853,12 @@ public class FXMLController implements Initializable {
             cas.add(ca);
             System.out.println("ca rendred starting thj");
             double wb = ca.getWB();
-            THJAlgorithm thja = new THJAlgorithm(ca.getMatriceCSV(), 4000, wb);
+            THJAlgorithm thja = new THJAlgorithm(ca.getMatriceCSV(), 12000, wb);
             if (indice.getSelectionModel().getSelectedItem().equals("Davies Bouldin")) {
                 thja.setDaviesBouldinCalculator();
                 System.out.println("using dbi");
             }
-            thja.setNombreiterationMax(80);
+            if(ImageCheck.isSelected())thja.setNombreiterationMax(80);
             thja.resolve(i);
 
             thjas.add(thja);

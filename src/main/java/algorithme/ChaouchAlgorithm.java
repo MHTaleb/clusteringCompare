@@ -118,7 +118,12 @@ public class ChaouchAlgorithm {
     private float getDistance(List<Float> element, List<Float> center, int g) {
         float sum = 0;
         for (int i = 0; i < element.size(); i++) {
-            sum += Math.pow(Math.sqrt(Math.pow(element.get(i) - center.get(i), 2)), g);
+            try {
+                sum += Math.pow(Math.sqrt(Math.pow(element.get(i) - center.get(i), 2)), g);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return (float) Math.sqrt(sum);
     }

@@ -163,6 +163,7 @@ public class KmeansResolver {
     public int getNumOfRepeat() {
         return numOfRepeat;
     }
+    
     public float getWB(){
         float wb = 0 ;
         int TAILLE_CLUSTER = CENTROIDS.size();

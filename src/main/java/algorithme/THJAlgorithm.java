@@ -238,7 +238,7 @@ public class THJAlgorithm {
         }
         //calculer ssb
         Player x_ = new Player(matriceCSV.get(0).size());
-        for (int i = 0; i < matriceCSV.size(); i++) {
+        for (int i = 1; i < matriceCSV.size(); i++) {
             List<Float> joueur_i_attribut = matriceCSV.get(i);
             List<Float> x_attribut = x_.getAttributes();
             List<Float> x_temp = new ArrayList();
@@ -261,15 +261,15 @@ public class THJAlgorithm {
     }
     
     private double minus(List<Float> attributes, List<Float> cpi) {
-        double result = 0;
-        try {
+        double result = 1;
+        
+         result = 0;   
         for (int i = 0; i < attributes.size(); i++) {
             result += Math.pow(attributes.get(i) - cpi.get(i), 2);
         }
+        
             
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+       
         return result;
     }
     
@@ -312,6 +312,7 @@ public class THJAlgorithm {
         
         double DB = 0;
         for (int i = 0; i < clusterMap.size(); i++) {
+            System.out.println(" i ==== "+i);
             DB += calculerD(i);
         }
         
@@ -323,8 +324,8 @@ public class THJAlgorithm {
         
         double sj = calculerS(j);
         double si = calculerS(i);
+        System.out.println("i = "+i+" j= "+j);
         double mij = calculerM(i, j);
-        
         rij = (si + sj) / mij;
         return rij;
     }
@@ -346,7 +347,13 @@ public class THJAlgorithm {
     }
     
     private double calculerM(int i, int j) {
-        double mij = minus(clusterMap.get(i).getClusterCoordinates(), clusterMap.get(j).getClusterCoordinates()) ;
+        clusterMap.get(i).updateCentroid();
+        final List<Float> cic = clusterMap.get(i).getClusterCoordinates();
+        clusterMap.get(j).updateCentroid();
+        final List<Float> cjc = clusterMap.get(j).getClusterCoordinates();
+        System.out.println("cic "+cic);
+        System.out.println("cjc "+cjc);
+        double mij = minus(cic, cjc) ;
         
         
         return mij;
