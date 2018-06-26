@@ -227,7 +227,7 @@ public class GameTheoryResolver {
         
     }
     
-    private double daviesBouldin(int k) {
+    public double daviesBouldin(int k) {
     
         init();
         

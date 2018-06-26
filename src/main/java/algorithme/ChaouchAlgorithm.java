@@ -16,7 +16,7 @@ import java.util.Objects;
  * @author taleb
  */
 public class ChaouchAlgorithm {
-
+    private int nombre_iteration = 0;
     private List<Integer> classes;
     private List<List<Float>> matriceCSV; // matrice des csv i:ligne , j:collone
 
@@ -112,6 +112,7 @@ public class ChaouchAlgorithm {
         } while (!isSame(currentClasses, previousClasses));
         currentClasses.stream().forEach(classes::add);
         long end = (System.currentTimeMillis() - start)/1000;
+        nombre_iteration = loop;
         System.out.println("end of clustering " + end + " seconds and " + loop + " repeats");
     }
 
@@ -274,6 +275,7 @@ public class ChaouchAlgorithm {
     private void initClusterMap() {
         clusterMap = new Hashtable<>();
         // creation des cluster
+        System.out.println("centroid size = "+currentCentroid.size());
         for (int i = 0; i < currentCentroid.size(); i++) {
             clusterMap.put(i, new Cluster(currentCentroid.get(i)));
         }
@@ -287,4 +289,8 @@ public class ChaouchAlgorithm {
 
     }
 
+    
+    public int getIterations(){
+        return nombre_iteration;
+    }
 }
