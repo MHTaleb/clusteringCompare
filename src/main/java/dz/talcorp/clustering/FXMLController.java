@@ -884,7 +884,7 @@ public class FXMLController implements Initializable {
             thja.resolve(i);
 
             thjas.add(thja);
-            
+
             chartNonSuperviseThj.getData().get(0).getData().add(new XYChart.Data<>(i, thja.getBestWB()));
             chartNonSuperviseThj.getData().get(1).getData().add(new XYChart.Data<>(i, ca.getWB()));
             iteration += thja.getIteration();
@@ -1037,10 +1037,10 @@ public class FXMLController implements Initializable {
     }
 
     private void kmeansNonSuperviseAlgo() throws IOException {
-         List<ClusteringDataPair> listeDesAttribusAvecValeur = null;
+        List<ClusteringDataPair> listeDesAttribusAvecValeur = null;
         csvpb = new CSVPointBuilder(selectedFile.getAbsolutePath(), false);
         listeDesAttribusAvecValeur = csvpb.getClusteringDataColumn();
-        initNonSuperviseeChart("Davies Bouldin","WB");
+        initNonSuperviseeChart("Davies Bouldin", "WB");
         // choix de collone du graphe
         final int PARAM_AFFICHAGE_1 = 2;
         final int PARAM_AFFICHAGE_2 = 1;
@@ -1050,17 +1050,30 @@ public class FXMLController implements Initializable {
         int iteration = 0;
         long currentTimeMillis = System.currentTimeMillis();
         long timeFinal = 0;
+        double min = Double.MAX_VALUE;
+        ChaouchAlgorithm ca_Best = null;
         for (int i = 2; i <= nombreClasseNonSupervise.getValue(); i++) {
             ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
             ca.resolve(i, 2);
             cas.add(ca);
             System.out.println("ca rendred starting thj");
             double wb = ca.getWB();
-            
+            if (indiceNonSupervise.getSelectionModel().getSelectedItem().toLowerCase().contains("wb")) {
+
+                if (wb < min) {
+                    min = wb;
+                    ca_Best = ca;
+                }
+            } else {
+                if (ca.getDaviesBouldin(i) < min) {
+                    min = ca.getDaviesBouldin(i);
+                    ca_Best = ca;
+                }
+            }
             chartNonSuperviseThj.getData().get(0).getData().add(new XYChart.Data<>(i, ca.getDaviesBouldin(i)));
             chartNonSuperviseThj.getData().get(1).getData().add(new XYChart.Data<>(i, ca.getWB()));
-            System.out.println(" i = "+i+"  WB = "+ca.getWB());
-            System.out.println(" i = "+i+"  DBI = "+ca.getDaviesBouldin(i));
+            System.out.println(" i = " + i + "  WB = " + ca.getWB());
+            System.out.println(" i = " + i + "  DBI = " + ca.getDaviesBouldin(i));
             long time = System.currentTimeMillis();
             timeFinal = (time - currentTimeMillis) / 1000;
             iteration += ca.getIterations();
@@ -1068,50 +1081,94 @@ public class FXMLController implements Initializable {
                     + "\n temp totla " + timeFinal + " s");
 
         }
+
+        if (ca_Best != null) {
+
+            List<ClusterPoint> centroids = new ArrayList<>();
+            for (int i = 0; i < ca_Best.getCurrentCentroid().size(); i++) {
+                centroids.add(
+                        new ClusterPoint(
+                                ca_Best.getCurrentCentroid().get(i).get(PARAM_AFFICHAGE_1 % listeDesAttribusAvecValeur.size()),
+                                ca_Best.getCurrentCentroid().get(i).get(PARAM_AFFICHAGE_2 % listeDesAttribusAvecValeur.size())
+                        )
+                );
+            }
+            List<ClusterPoint> points = new ArrayList<>();
+            
+            for (int i = 0; i < ca_Best.getClasses().size(); i++) {
+                final ClusterPoint clusterPoint = new ClusterPoint(
+                        ca_Best.getMatriceCSV().get(i).get(PARAM_AFFICHAGE_1 % listeDesAttribusAvecValeur.size()),
+                        ca_Best.getMatriceCSV().get(i).get(PARAM_AFFICHAGE_2 % listeDesAttribusAvecValeur.size())
+                );
+                clusterPoint.setCurrentCluster(ca_Best.getClasses().get(i));
+                points.add(clusterPoint);
+            }
+            
+            drawChart(0, centroids, points, chartNonSuperviseKmeans);
+        }
     }
 
     private void voteNonSuperviseAlgo() throws IOException {
-         List<ClusteringDataPair> listeDesAttribusAvecValeur = null;
+        List<ClusteringDataPair> listeDesAttribusAvecValeur = null;
         csvpb = new CSVPointBuilder(selectedFile.getAbsolutePath(), false);
         listeDesAttribusAvecValeur = csvpb.getClusteringDataColumn();
-        initNonSuperviseeChart("Davies Bouldin","WB");
+        initNonSuperviseeChart("Davies Bouldin", "WB");
         // choix de collone du graphe
         final int PARAM_AFFICHAGE_1 = 2;
         final int PARAM_AFFICHAGE_2 = 1;
         initNonSuperviseeChart("Davies Bouldin", "WB");
-         List<GameTheoryResolver> gtrs = new ArrayList<>();
+        List<GameTheoryResolver> gtrs = new ArrayList<>();
         List<THJAlgorithm> thjas = new ArrayList<>();
         int iteration = 0;
         long currentTimeMillis = System.currentTimeMillis();
         long timeFinal = 0;
-        
+
+        GameTheoryResolver best_gameTheoryResolver = null;
+        double min = Double.MAX_VALUE;
+        int winner_K = 2;
         for (int i = 2; i <= nombreClasseNonSupervise.getValue(); i++) {
-        Map<String, List<ClusterPoint>> clusteringDimensions = csvpb.getClusteringDimensions();
-        final Integer I = i;
-        simulations = new ArrayList<>();
+            Map<String, List<ClusterPoint>> clusteringDimensions = csvpb.getClusteringDimensions();
+            final Integer I = i;
+            simulations = new ArrayList<>();
 
-        clusteringDimensions.keySet().stream().forEach(key -> {
-            if (!(key.toLowerCase().trim().startsWith("class ")
-                    || //key.toLowerCase().trim().startsWith("id") ||
-                    key.toLowerCase().trim().endsWith(" class")
-                    || key.toLowerCase().trim().endsWith("id")
-                    || key.toLowerCase().trim().equals("id"))) {
-                final KmeansResolver kmeansResolver = new KmeansResolver(clusteringDimensions.get(key), I);
-                System.out.println("simulation " + key + " is done");
-                kmeansResolver.setSimulationName(key);
-                simulations.add(kmeansResolver);
+            clusteringDimensions.keySet().stream().forEach(key -> {
+                if (!(key.toLowerCase().trim().startsWith("class ")
+                        || //key.toLowerCase().trim().startsWith("id") ||
+                        key.toLowerCase().trim().endsWith(" class")
+                        || key.toLowerCase().trim().endsWith("id")
+                        || key.toLowerCase().trim().equals("id"))) {
+                    final KmeansResolver kmeansResolver = new KmeansResolver(clusteringDimensions.get(key), I);
+                    System.out.println("simulation " + key + " is done");
+                    kmeansResolver.setSimulationName(key);
+                    simulations.add(kmeansResolver);
 
+                }
+            });
+            System.out.println("simulation  is done");
+            ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+
+            GameTheoryResolver gameTheoryResolver = new GameTheoryResolver(simulations, algorithm.getMatriceCSV());
+            
+            
+            if (indiceNonSupervise.getSelectionModel().getSelectedItem().toLowerCase().contains("wb")) {
+
+                if (gameTheoryResolver.wbCalculation(i) < min) {
+                    min = gameTheoryResolver.wbCalculation(i) ;
+                    best_gameTheoryResolver = gameTheoryResolver;
+                    winner_K = i;
+                }
+            } else {
+                if (gameTheoryResolver.daviesBouldin(i) < min) {
+                    min = gameTheoryResolver.daviesBouldin(i);
+                    best_gameTheoryResolver = gameTheoryResolver;
+                    winner_K = i ;
+                }
             }
-        });
-        System.out.println("simulation  is done");
-        ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
-        
-           GameTheoryResolver gameTheoryResolver = new GameTheoryResolver(simulations, algorithm.getMatriceCSV());
-           
+            
             chartNonSuperviseThj.getData().get(0).getData().add(new XYChart.Data<>(i, gameTheoryResolver.daviesBouldin(i)));
             chartNonSuperviseThj.getData().get(1).getData().add(new XYChart.Data<>(i, gameTheoryResolver.wbCalculation(i)));
-            System.out.println(" i = "+i+"  WB = "+gameTheoryResolver.wbCalculation(i));
-            System.out.println(" i = "+i+"  DBI = "+gameTheoryResolver.daviesBouldin(i));
+            System.out.println(" i = " + i + "  WB = " + gameTheoryResolver.wbCalculation(i));
+            System.out.println(" i = " + i + "  DBI = " + gameTheoryResolver.daviesBouldin(i));
             long time = System.currentTimeMillis();
             timeFinal = (time - currentTimeMillis) / 1000;
 //            iteration += ca.getIterations();
@@ -1119,8 +1176,31 @@ public class FXMLController implements Initializable {
                     + "\n temp totla " + timeFinal + " s");
 
         }
-        
 
+        
+        if(best_gameTheoryResolver != null){
+            PFEDataFormator pfeDataFormator = new PFEDataFormator(best_gameTheoryResolver.getPairResults());
+
+        // specifier le point de depart (on lui donne la classification du csv --> derniere collone class )
+        pfeDataFormator.setClassData(listeDesAttribusAvecValeur);
+            chartNonSuperviseKmeans.getData().clear();
+           for (int i = 0; i < winner_K; i++) {
+
+            final ObservableList<XYChart.Data<Number, Number>> observableArrayList = FXCollections.observableArrayList();
+
+            for (int j = 0; j < pfeDataFormator.getClassifications().get(i).size(); j++) {
+                String node = (String) pfeDataFormator.getClassifications().get(i).get(j);
+                int nodeIndex = Integer.parseInt(node.replace("node", ""));
+
+                observableArrayList.add(new XYChart.Data<>(Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_1 % listeDesAttribusAvecValeur.size()).getColumnPoints().get(nodeIndex).getValue()), Double.valueOf(listeDesAttribusAvecValeur.get(PARAM_AFFICHAGE_2 % listeDesAttribusAvecValeur.size()).getColumnPoints().get(nodeIndex).getValue())));
+            }
+
+            final XYChart.Series<Number, Number> series = new XYChart.Series<>(observableArrayList);
+            series.setName("class" + i);
+            chartNonSuperviseKmeans.dataProperty().get().add(series);
+           }
+        }
+        
     }
 
     private static class DistanceCBD {
