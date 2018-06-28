@@ -25,8 +25,14 @@ public class GameTheoryResolver {
     private List<KmeansResolver> kmeanResults;
 
     private List<PairResult> pairResults;
+
+    public Integer getIterations() {
+        return iterations;
+    }
    
 
+    
+    
     public GameTheoryResolver() {
     }
     
@@ -52,6 +58,7 @@ public class GameTheoryResolver {
      * rectangle cercle ect ...
      * 
      */
+    Integer iterations =0;
     private void resolve() {
         final RecordsHandeler recordsHandeler = new RecordsHandeler();
 
@@ -61,6 +68,7 @@ public class GameTheoryResolver {
             System.out.println(clusteringResult.getSimulationName());
             final OnePointRecorder onePointRecorder = new OnePointRecorder(clusteringResult);
             clusteringResult.getPoints().forEach(onePointRecorder);
+            iterations++;
         });
 
         System.out.println("********************/*/*/*/***********************");
@@ -138,7 +146,7 @@ public class GameTheoryResolver {
             if (frequency == 1) {
                 return -1;
             }
-
+            
             return result;
         }
 
@@ -156,6 +164,7 @@ public class GameTheoryResolver {
             pairResult.setNodeLabel("node" + i);
             i++;
             pairResults.add(pairResult);
+            iterations++;
 
         }
     }
@@ -173,6 +182,7 @@ public class GameTheoryResolver {
         public void accept(ClusterPoint point) {
             pairResults.get(i).AddResult(clusteringResult.getSimulationName(), point.getCurrentCluster());
             i++;
+            
         }
     }
 

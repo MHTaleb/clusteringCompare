@@ -437,8 +437,14 @@ public class FXMLController implements Initializable {
     String tit1e;
 
     public void algoChaouech(List<ClusteringDataPair> listeDesAttribusAvecValeur, final int PARAM_AFFICHAGE_1, final int PARAM_AFFICHAGE_2) throws NumberFormatException {
+        
+        long startTime = System.currentTimeMillis();
+        
         ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
         algorithm.resolve((int) nombreClusterDiabete.getValue(), gValue.getSelectionModel().getSelectedItem().getDistanceValue());
+        long endTime = (System.currentTimeMillis() - startTime ) ;
+        
+        System.out.println("temps d execution algorithme KMEANS = "+endTime+ "ms avec un nombre d iteration de "+algorithm.getIterations());
         System.out.println("algorithme " + algorithm);
 
         tableStudyResultList.clear();
@@ -543,6 +549,9 @@ public class FXMLController implements Initializable {
     }
 
     public void algoBinome(List<ClusteringDataPair> listeDesAttribusAvecValeur, final int PARAM_AFFICHAGE_1, final int PARAM_AFFICHAGE_2) throws NumberFormatException {
+        
+        long startTime = System.currentTimeMillis();
+        
         Map<String, List<ClusterPoint>> clusteringDimensions = csvpb.getClusteringDimensions();
         simulations = new ArrayList<>();
 
@@ -561,8 +570,14 @@ public class FXMLController implements Initializable {
         });
         System.out.println("simulation  is done");
         ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+        
+        
         GameTheoryResolver gameTheoryResolver = new GameTheoryResolver(simulations, algorithm.getMatriceCSV());
 
+        long endTime = (System.currentTimeMillis()-startTime);
+        
+        System.out.println("temps d execution methode de vote est  :  "+endTime+"ms avec un nombre d iteration "+gameTheoryResolver.getIterations());
+        
         // preparé une classe qui va organiser les resultats
         PFEDataFormator pfeDataFormator = new PFEDataFormator(gameTheoryResolver.getPairResults());
 
@@ -759,10 +774,11 @@ public class FXMLController implements Initializable {
             chartCSVBruit.dataProperty().get().add(seriesBruit);
 
         }
-        long end = (System.currentTimeMillis() - start) / 1000;
+        long end = (System.currentTimeMillis() - start) ;
         ///affichage final
         drawChart(thja.getIteration(), centroids, points, chartCSV);
-        chartCSV.setTitle("nombre d iteration " + thja.getIteration() + " \n temps d execution " + end + " s");
+        System.out.println("nombre d iteration " + thja.getIteration() + " \n temps d execution " + end + " ms");
+        chartCSV.setTitle("nombre d iteration " + thja.getIteration() + " \n temps d execution " + end + " ms");
         /// affichage tableau
         List<Integer> classesAlgorithme = new ArrayList();
 
