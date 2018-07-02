@@ -15,12 +15,12 @@ import java.util.Objects;
  *
  * @author taleb
  */
-public class ChaouchAlgorithm {
+public class KmeansG {
     private int nombre_iteration = 0;
     private List<Integer> classes;
     private List<List<Float>> matriceCSV; // matrice des csv i:ligne , j:collone
 
-    public ChaouchAlgorithm(List<ClusteringDataPair> clusteringDataPairs) {
+    public KmeansG(List<ClusteringDataPair> clusteringDataPairs) {
 
         this.matriceCSV = new ArrayList<>();
 
@@ -44,6 +44,8 @@ public class ChaouchAlgorithm {
         classes = new ArrayList<>(clusteringDataPairs.get(0).getColumnPoints().size());
     }
     List<List<Float>> currentCentroid;
+    List<List<Float>> previousCentroid;
+    
 
     public void resolve(int numberOfClasses, final int G) {
 
@@ -54,12 +56,13 @@ public class ChaouchAlgorithm {
         currentCentroid = new ArrayList<>();
 
         for (int i = 0; i < numberOfClasses; i++) {
-            currentCentroid.add(matriceCSV.get(i));
+            currentCentroid.add(matriceCSV.get((int)((i*Math.random()*100)%matriceCSV.size())));
         }
 
         List<Integer> currentClasses = new ArrayList();
         do {
             loop++;
+            System.out.println("loops "+loop);
             for (List<Float> element : matriceCSV) {
                 float minDistance = Float.MAX_VALUE;
                 int selectedIndex = 0;
@@ -77,11 +80,12 @@ public class ChaouchAlgorithm {
             }
 
             if (!isSame(currentClasses, previousClasses)) {
+                System.out.println("got in");
                 previousClasses = new ArrayList<>();
                 currentClasses.stream().forEach(previousClasses::add);
                 currentClasses = new ArrayList<>();
             }
-
+            previousCentroid = currentCentroid;
             currentCentroid = new ArrayList<>();
 
             // 1 2 .... 3  centroid
@@ -106,7 +110,12 @@ public class ChaouchAlgorithm {
                 for (int j = 0; j < centroid.size(); j++) {
                     centroid.set(j, centroid.get(j) / divide);
                 }
+                System.out.println("centroid :"+i+" : "+centroid);
+                if(centroid.size() == 0){
+                    centroid.addAll(previousCentroid.get(i));
+                }
                 currentCentroid.add(centroid);
+                
             }
             System.out.println("processing");
         } while (!isSame(currentClasses, previousClasses));
@@ -123,6 +132,7 @@ public class ChaouchAlgorithm {
                 sum += Math.pow(Math.sqrt(Math.pow(element.get(i) - center.get(i), 2)), g);
                 
             } catch (Exception e) {
+                System.out.println("center.get(i) "+center.get(i));
                 e.printStackTrace();
             }
         }

@@ -18,12 +18,13 @@ import javax.imageio.ImageIO;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
-
 /**
  *
  * @author taleb
  */
 public class ImageToCSVConverter {
+
+    public static int width, height;
 
     public static void convertToCSV() throws IOException {
         FileChooser chooser = new FileChooser();
@@ -34,9 +35,14 @@ public class ImageToCSVConverter {
         );
         File selectedImage = chooser.showOpenDialog(null);
 
+        imageToCSV3D(selectedImage);
+
+    }
+
+    public static File imageToCSV3D(File selectedImage) {
+        FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().clear();
         chooser.getExtensionFilters().addAll(
-            
                 new FileChooser.ExtensionFilter("CSV", "*.csv")
         );
 
@@ -45,14 +51,15 @@ public class ImageToCSVConverter {
         File toSaveCSV = chooser.showSaveDialog(null);
         if (selectedImage != null) {
             CSVPrinter csvPrinter = null;
-           
             FileWriter fWriter = null;
             try {
 
-               
+                BufferedImage readImage = ImageIO.read(selectedImage);
+                ImageToCSVConverter.width = readImage.getWidth();
+                ImageToCSVConverter.height = readImage.getHeight();
                 int rowNum = 0;
                 if (toSaveCSV.createNewFile()) {
-                    BufferedImage readImage = ImageIO.read(selectedImage);
+
                     final int colonsSize = readImage.getWidth();
                     ArrayList<String> headers = new ArrayList();
 
@@ -64,37 +71,36 @@ public class ImageToCSVConverter {
                     headers.add("BLUE");
                     headers.add("class");
 
+                    System.out.println("ImageToCSVConverter.height " + ImageToCSVConverter.height);
+                    System.out.println("ImageToCSVConverter.width " + ImageToCSVConverter.width);
                     for (int i = 0; i < readImage.getHeight(); i++) { // ligne indice
                         for (int j = 0; j < colonsSize; j++) { // collone indice
-                        List ligne = new ArrayList<>();
-                        Color c = new Color(readImage.getRGB(j, i));
-                        ligne.add(c.getRed());
-                        ligne.add(c.getGreen());
-                        ligne.add(c.getBlue());
-                        ligne.add(0);
-                        matriceCSV.add(ligne);
+                            List ligne = new ArrayList<>();
+                            Color c = new Color(readImage.getRGB(j, i));
+                            ligne.add(c.getRed());
+                            ligne.add(c.getGreen());
+                            ligne.add(c.getBlue());
+                            ligne.add(0);
+                            matriceCSV.add(ligne);
                         }
                     }
-                    
-                    if(toSaveCSV.getName().endsWith("csv")){
-                            CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator("\n").withDelimiter(';').withFirstRecordAsHeader();
-                            fWriter = new FileWriter(toSaveCSV);
-                            csvPrinter = new CSVPrinter(fWriter, csvFormat);
-                            csvPrinter.printRecord(headers);
-                            for (int i = 0; i < matriceCSV.size(); i++) {
-                                csvPrinter.printRecord(matriceCSV.get(i));
-                            }
-                        
-                    }else{
-                        
-                
+
+                    if (toSaveCSV.getName().endsWith("csv")) {
+                        CSVFormat csvFormat = CSVFormat.DEFAULT.withRecordSeparator("\n").withDelimiter(';').withFirstRecordAsHeader();
+                        fWriter = new FileWriter(toSaveCSV);
+                        csvPrinter = new CSVPrinter(fWriter, csvFormat);
+                        csvPrinter.printRecord(headers);
+                        for (int i = 0; i < matriceCSV.size(); i++) {
+                            csvPrinter.printRecord(matriceCSV.get(i));
+                        }
+
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
                 try {
-                     
+
                     if (fWriter != null) {
                         fWriter.flush();
                         fWriter.close();
@@ -108,7 +114,7 @@ public class ImageToCSVConverter {
                 }
             }
         }
-
+        return toSaveCSV;
     }
 
 }

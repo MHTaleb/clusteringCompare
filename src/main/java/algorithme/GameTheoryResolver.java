@@ -8,6 +8,7 @@ package algorithme;
 import entity.ClusterPoint;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -226,13 +227,17 @@ public class GameTheoryResolver {
         for (int i = 0; i < matriceCSV.size(); i++) {
             List<Float> playerI = matriceCSV.get(i);
             Integer indicePlayerI = listeDesClasses.get(i);
-            if(!clusterMap.containsKey(indicePlayerI)){
+            if(!clusterMap.containsKey(indicePlayerI) && indicePlayerI >=0){
+                System.out.println("indicePlayerI "+indicePlayerI);
                 clusterMap.put(indicePlayerI, new Cluster());
             }
+            if(indicePlayerI >=0)
             clusterMap.get(indicePlayerI).getPlayers().add(new Player(""+i, playerI));
         }
+        
         for (int i = 0; i < clusterMap.size(); i++) {
             clusterMap.get(i).updateCentroid();
+            
         }
         
     }

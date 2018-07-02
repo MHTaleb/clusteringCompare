@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="906.0" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dz.talcorp.clustering.ClusteringController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="906.0" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dz.talcorp.clustering.ClusteringController">
    <children>
       <BorderPane layoutX="209.0" layoutY="97.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
@@ -98,7 +98,7 @@
                                                    </font>
                                                 </JFXTextField>
                                                 <JFXComboBox fx:id="DistanceKmeans" prefHeight="25.0" prefWidth="98.0" promptText="type distance" />
-                                                <JFXCheckBox onAction="#activerNombreDeclasseKmeans" text="classe" />
+                                                <JFXCheckBox fx:id="classeKmeansCheck" onAction="#activerNombreDeclasseKmeans" selected="true" text="classe" />
                                                 <VBox alignment="CENTER_LEFT" prefHeight="75.0" prefWidth="125.0" HBox.hgrow="SOMETIMES">
                                                    <children>
                                                       <Label prefHeight="17.0" prefWidth="122.0" text="Nombre de Classe">
@@ -147,7 +147,7 @@
                                                 <HBox HBox.hgrow="SOMETIMES" />
                                                 <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <JFXButton onAction="#LancerSimulationKmeans" prefHeight="25.0" prefWidth="1163.0" ripplerFill="#40476d" text="LANCER K-MEANS" HBox.hgrow="ALWAYS" />
+                                                      <JFXButton fx:id="launchKmeansButton" onAction="#LancerSimulationKmeans" prefHeight="25.0" prefWidth="1163.0" ripplerFill="#40476d" text="LANCER K-MEANS" HBox.hgrow="ALWAYS" />
                                                    </children>
                                                 </HBox>
                                                 <HBox HBox.hgrow="SOMETIMES" />
@@ -180,7 +180,7 @@
                                                       <Font name="System Bold" size="12.0" />
                                                    </font>
                                                 </JFXTextField>
-                                                <JFXCheckBox onAction="#activerNombreDeClasseVote" text="classe" />
+                                                <JFXCheckBox fx:id="classVoteCheck" onAction="#activerNombreDeClasseVote" selected="true" text="classe" />
                                                 <VBox alignment="CENTER_LEFT" prefHeight="75.0" prefWidth="125.0" HBox.hgrow="SOMETIMES">
                                                    <children>
                                                       <Label prefHeight="17.0" prefWidth="122.0" text="Nombre de Classe">
@@ -230,7 +230,7 @@
                                                 <HBox HBox.hgrow="SOMETIMES" />
                                                 <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <JFXButton onAction="#LancerSimulationVote" prefHeight="25.0" prefWidth="1163.0" ripplerFill="#40476d" text="LANCER VOTE" HBox.hgrow="ALWAYS" />
+                                                      <JFXButton fx:id="launchVoteButton" onAction="#LancerSimulationVote" prefHeight="25.0" prefWidth="1163.0" ripplerFill="#40476d" text="LANCER VOTE" HBox.hgrow="ALWAYS" />
                                                    </children>
                                                 </HBox>
                                                 <HBox HBox.hgrow="SOMETIMES" />
@@ -265,7 +265,7 @@
                                                    </font>
                                                 </JFXTextField>
                                                 <JFXComboBox fx:id="indiceValiditeTHJ" prefHeight="25.0" prefWidth="130.0" promptText="Indice De Validité" />
-                                                <JFXCheckBox onAction="#activerClasseTHJ" text="classe" />
+                                                <JFXCheckBox fx:id="classTHJCheck" onAction="#activerClasseTHJ" selected="true" text="classe" />
                                                 <VBox alignment="CENTER_LEFT" prefHeight="75.0" prefWidth="125.0" HBox.hgrow="SOMETIMES">
                                                    <children>
                                                       <Label prefHeight="17.0" prefWidth="122.0" text="Nombre de Classe">
@@ -315,7 +315,7 @@
                                                 <HBox HBox.hgrow="SOMETIMES" />
                                                 <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <JFXButton onAction="#LancerSimulationTHJ" prefHeight="25.0" prefWidth="1163.0" ripplerFill="#40476d" text="LANCER APROCHE THEORIE DE JEU" HBox.hgrow="ALWAYS" />
+                                                      <JFXButton fx:id="launchTHJButton" onAction="#LancerSimulationTHJ" prefHeight="25.0" prefWidth="1163.0" ripplerFill="#40476d" text="LANCER APROCHE THEORIE DE JEU" HBox.hgrow="ALWAYS" />
                                                    </children>
                                                 </HBox>
                                                 <HBox HBox.hgrow="SOMETIMES" />

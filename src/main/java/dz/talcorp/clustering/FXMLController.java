@@ -1,6 +1,6 @@
 package dz.talcorp.clustering;
 
-import algorithme.ChaouchAlgorithm;
+import algorithme.KmeansG;
 import algorithme.Cluster;
 import algorithme.GameTheoryResolver;
 import algorithme.KmeansResolver;
@@ -440,7 +440,7 @@ public class FXMLController implements Initializable {
         
         long startTime = System.currentTimeMillis();
         
-        ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+        KmeansG algorithm = new KmeansG(listeDesAttribusAvecValeur);
         algorithm.resolve((int) nombreClusterDiabete.getValue(), gValue.getSelectionModel().getSelectedItem().getDistanceValue());
         long endTime = (System.currentTimeMillis() - startTime ) ;
         
@@ -569,7 +569,7 @@ public class FXMLController implements Initializable {
             }
         });
         System.out.println("simulation  is done");
-        ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+        KmeansG algorithm = new KmeansG(listeDesAttribusAvecValeur);
         
         
         GameTheoryResolver gameTheoryResolver = new GameTheoryResolver(simulations, algorithm.getMatriceCSV());
@@ -676,7 +676,7 @@ public class FXMLController implements Initializable {
         long start = System.currentTimeMillis();
 
         int k = (int) nombreClusterDiabete.getValue();
-        ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+        KmeansG ca = new KmeansG(listeDesAttribusAvecValeur);
         ca.resolve(k, 2);
 
         tit1e = "THJ";
@@ -878,13 +878,13 @@ public class FXMLController implements Initializable {
         final int PARAM_AFFICHAGE_1 = 2;
         final int PARAM_AFFICHAGE_2 = 1;
 
-        List<ChaouchAlgorithm> cas = new ArrayList<>();
+        List<KmeansG> cas = new ArrayList<>();
         List<THJAlgorithm> thjas = new ArrayList<>();
         int iteration = 0;
         long currentTimeMillis = System.currentTimeMillis();
         long timeFinal = 0;
         for (int i = 2; i <= nombreClasseNonSupervise.getValue(); i++) {
-            ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+            KmeansG ca = new KmeansG(listeDesAttribusAvecValeur);
             ca.resolve(i, 2);
             cas.add(ca);
             System.out.println("ca rendred starting thj");
@@ -1015,25 +1015,25 @@ public class FXMLController implements Initializable {
                     Color c = new Color(100, 120, 130);
                     switch (currentCluster) {
                         case 0:
-                            c = new Color(20, 120, 210);
+                            c = Color.RED;
                             break;
                         case 1:
-                            c = new Color(180, 20, 130);
+                            c = Color.BLACK;
                             break;
                         case 2:
-                            c = new Color(20, 200, 13);
+                            c = Color.GREEN;
                             break;
                         case 3:
-                            c = new Color(220, 70, 13);
+                            c = Color.BLUE;
                             break;
                         case 4:
-                            c = new Color(90, 170, 213);
+                            c = Color.ORANGE;
                             break;
                         case 5:
-                            c = new Color(2, 30, 113);
+                            c = Color.PINK;
                             break;
                         case 6:
-                            c = new Color(20, 7, 183);
+                            c = Color.MAGENTA;
                             break;
                         case 7:
                             c = new Color(127, 170, 133);
@@ -1061,15 +1061,15 @@ public class FXMLController implements Initializable {
         final int PARAM_AFFICHAGE_1 = 2;
         final int PARAM_AFFICHAGE_2 = 1;
 
-        List<ChaouchAlgorithm> cas = new ArrayList<>();
+        List<KmeansG> cas = new ArrayList<>();
         List<THJAlgorithm> thjas = new ArrayList<>();
         int iteration = 0;
         long currentTimeMillis = System.currentTimeMillis();
         long timeFinal = 0;
         double min = Double.MAX_VALUE;
-        ChaouchAlgorithm ca_Best = null;
+        KmeansG ca_Best = null;
         for (int i = 2; i <= nombreClasseNonSupervise.getValue(); i++) {
-            ChaouchAlgorithm ca = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+            KmeansG ca = new KmeansG(listeDesAttribusAvecValeur);
             ca.resolve(i, 2);
             cas.add(ca);
             System.out.println("ca rendred starting thj");
@@ -1133,8 +1133,7 @@ public class FXMLController implements Initializable {
         final int PARAM_AFFICHAGE_1 = 2;
         final int PARAM_AFFICHAGE_2 = 1;
         initNonSuperviseeChart("Davies Bouldin", "WB");
-        List<GameTheoryResolver> gtrs = new ArrayList<>();
-        List<THJAlgorithm> thjas = new ArrayList<>();
+  
         int iteration = 0;
         long currentTimeMillis = System.currentTimeMillis();
         long timeFinal = 0;
@@ -1161,7 +1160,7 @@ public class FXMLController implements Initializable {
                 }
             });
             System.out.println("simulation  is done");
-            ChaouchAlgorithm algorithm = new ChaouchAlgorithm(listeDesAttribusAvecValeur);
+            KmeansG algorithm = new KmeansG(listeDesAttribusAvecValeur);
 
             GameTheoryResolver gameTheoryResolver = new GameTheoryResolver(simulations, algorithm.getMatriceCSV());
             
@@ -1219,45 +1218,6 @@ public class FXMLController implements Initializable {
         
     }
 
-    private static class DistanceCBD {
-
-        private final StringProperty distanceName = new SimpleStringProperty();
-        private final IntegerProperty distanceValue = new SimpleIntegerProperty();
-
-        public int getDistanceValue() {
-            return distanceValue.get();
-        }
-
-        public void setDistanceValue(int value) {
-            distanceValue.set(value);
-        }
-
-        public IntegerProperty distanceValueProperty() {
-            return distanceValue;
-        }
-
-        public String getDistanceName() {
-            return distanceName.get();
-        }
-
-        public void setDistanceName(String value) {
-            distanceName.set(value);
-        }
-
-        public StringProperty distanceNameProperty() {
-            return distanceName;
-        }
-
-        public DistanceCBD(String distanceName, int value) {
-            this.distanceName.setValue(distanceName);
-            distanceValue.setValue(value);
-        }
-
-        @Override
-        public String toString() {
-            return distanceName.getValue();
-        }
-
-    }
+    
 
 }
