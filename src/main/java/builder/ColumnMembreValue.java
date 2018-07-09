@@ -9,14 +9,14 @@ package builder;
  *
  * @author taleb
  */
-public class Line {
+public class ColumnMembreValue {
     private Float value;
     private int index;
 
-    public Line() {
+    public ColumnMembreValue() {
     }
 
-    public Line(Float value, int index) {
+    public ColumnMembreValue(Float value, int index) {
         this.value = value;
         this.index = index;
     }

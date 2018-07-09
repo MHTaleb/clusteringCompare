@@ -14,12 +14,12 @@ import java.util.List;
 public class ClusteringDataPair {
 
     private String columnName;
-    private List<Line> columnPoints;
+    private List<ColumnMembreValue> columnPoints;
 
     public ClusteringDataPair() {
     }
 
-    public ClusteringDataPair(String column, List<Line> points) {
+    public ClusteringDataPair(String column, List<ColumnMembreValue> points) {
         this.columnName = column;
         this.columnPoints = points;
     }
@@ -28,7 +28,7 @@ public class ClusteringDataPair {
         return columnName;
     }
 
-    public List<Line> getColumnPoints() {
+    public List<ColumnMembreValue> getColumnPoints() {
         return columnPoints;
     }
 
@@ -36,7 +36,7 @@ public class ClusteringDataPair {
         this.columnName = columnName;
     }
 
-    public void setColumnPoints(List<Line> columnPoints) {
+    public void setColumnPoints(List<ColumnMembreValue> columnPoints) {
         this.columnPoints = columnPoints;
     }
 

@@ -843,7 +843,7 @@ public class FXMLController implements Initializable {
 
     @FXML
     private void convert(ActionEvent event) throws IOException {
-        ImageToCSVConverter.convertToCSV();
+        ImageToCSVConverter.convertTo3DCSV();
     }
 
     @FXML

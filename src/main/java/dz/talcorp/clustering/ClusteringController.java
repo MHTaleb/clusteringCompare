@@ -13,7 +13,7 @@ import algorithme.Player;
 import algorithme.THJAlgorithm;
 import builder.CSVPointBuilder;
 import builder.ClusteringDataPair;
-import builder.Line;
+import builder.ColumnMembreValue;
 import com.jfoenix.controls.JFXAlert;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
@@ -774,8 +774,10 @@ public class ClusteringController implements Initializable {
                     "" + currentBenchMarkSize, "" + currentWellClassedSize, "" + ((float) currentWellClassedSize / (float) currentBenchMarkSize) * 100));
 
             chartKmeansBenchMarkInitial.dataProperty().get().clear();
+            chartKmeansBenchMarkInitial.setTitle("Initial");
             chartKmeansBenchMarkFinal.dataProperty().get().clear();
             chartKmeansBenchMarkBruit.dataProperty().get().clear();
+            chartKmeansBenchMarkBruit.setTitle("Bruit");
 
             int PARAM_AFFICHAGE_1 = 1;
             int PARAM_AFFICHAGE_2 = 2;
@@ -798,6 +800,8 @@ public class ClusteringController implements Initializable {
                 final XYChart.Series<Number, Number> series = new XYChart.Series<>(observableArrayList);
                 series.setName("class" + i);
                 chartKmeansBenchMarkFinal.dataProperty().get().add(series);
+                chartKmeansBenchMarkFinal.setTitle("Final \nNombre d'iteration "+algorithm.getIterations()+"\n"
+                        + "Temps : "+end_time+" ms");
 //-----------------------------------
                 final ObservableList<XYChart.Data<Number, Number>> observableArrayListBruit = FXCollections.observableArrayList();
 
@@ -1161,6 +1165,10 @@ public class ClusteringController implements Initializable {
             chartVoteBenchMarkInitial.dataProperty().get().clear();
             chartVoteBenchMarkFinal.dataProperty().get().clear();
             chartVoteBenchMarkBruit.dataProperty().get().clear();
+            chartVoteBenchMarkInitial.setTitle("Initial");
+            chartVoteBenchMarkBruit.setTitle("Bruit");
+            chartVoteBenchMarkFinal.setTitle("Final \nnombre d'iterations : "+gameTheoryResolver.getIterations()+"\n"
+                    + "temps "+endTime+" ms");
             for (int i = 0; i < nombreClusterVote.getValue(); i++) {
 
                 final ObservableList<XYChart.Data<Number, Number>> observableArrayList = FXCollections.observableArrayList();
@@ -1384,10 +1392,15 @@ public class ClusteringController implements Initializable {
                 i++;
             }
 
+            long end = (System.currentTimeMillis() - start);
             //------------------------- Affichage
             chartTHJBenchMarkInitial.dataProperty().get().clear();
+            chartTHJBenchMarkInitial.setTitle("Initial");
             chartTHJBenchMarkFinal.dataProperty().get().clear();
             chartTHJBenchMarkBruit.dataProperty().get().clear();
+            chartTHJBenchMarkBruit.setTitle("Bruit");
+            chartTHJBenchMarkFinal.setTitle("Final\nNombre d'iteration : "+thja.getIteration()+"\n"
+                    + "temps "+end+" ms");
 
             Predicate<? super ClusteringDataPair> classFilter = cdp -> {
                 return cdp.getColumnName().toLowerCase().trim().equals("class");
@@ -1448,7 +1461,6 @@ public class ClusteringController implements Initializable {
                 chartTHJBenchMarkBruit.dataProperty().get().add(seriesBruit);
 
             }
-            long end = (System.currentTimeMillis() - start);
             ///affichage final
             drawChart(thja.getIteration(), centroids, points, chartTHJBenchMarkFinal);
             System.out.println("nombre d iteration " + thja.getIteration() + " \n temps d execution " + end + " ms");

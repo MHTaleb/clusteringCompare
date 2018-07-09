@@ -7,7 +7,7 @@ package dz.talcorp.clustering;
 
 import algorithme.GameTheoryResolver;
 import builder.ClusteringDataPair;
-import builder.Line;
+import builder.ColumnMembreValue;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +74,7 @@ public class PFEDataFormator {
           return cdp.getColumnName().trim().toLowerCase().equals("class");
         };
         clusteringDataPairs.stream().filter(selectClass).forEach(dataList->{
-            final List<Line> points = dataList.getColumnPoints();
+            final List<ColumnMembreValue> points = dataList.getColumnPoints();
             points.stream().forEach(point->{
                 Float clusterIndex = point.getValue();
                 if(!classificationBenchMark.containsKey(clusterIndex.intValue())){

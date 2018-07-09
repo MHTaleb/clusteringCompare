@@ -22,7 +22,23 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 /**
- *
+ * cette classe nous permet de lire un fichier csv et le mapper dans une java List de ClusteringDataPair
+ * 
+ * chaque clustering data pair est simplement une collone dans le fichier csv avec ses donnée par exemple
+ * 
+ * Age : 17, 18, 22, 25, 15, 3 ......  ( ceci est un objet de type ClusteringDataPair il contient une liste de valeur et le nom de la collone )
+ * 
+ * dans cette exemple chaque valuer d age est en faite du type ColumnMembreValue qui enfaite a deux atribut : [value,index]
+ * value dans ce cas est par exemple 22, loquiment 22 a l index 2 (notation commence de 0)
+ * de cette facon j ai une conscience de l'appartenance de la valeur a son individu
+ * 
+ * 
+ * a la fin pour lire une colomn specifique on ecris  clusteringDataColumn.get(i)
+ * et pour recuperer la valeur d un individu pour une collone specifique on ecris
+ * clusteringDataColumn.get(i).get(j).getValue().   ( attribut i : age   ,  membre j : 7 eme joueur , getValue() la valeur de l atribut age pour le 7 eme joureur )
+ * 
+ * de cette facon on peut manipuler nos donnees et les introduire dans un algorithme au choix 
+ * 
  * @author taleb
  */
 public class CSVPointBuilder {
@@ -31,6 +47,10 @@ public class CSVPointBuilder {
     private String[] HEADERS;
     List<ClusteringDataPair> clusteringDataColumn;
     
+    /**
+     * @param charge si vrai on va preparé une map de tout les combinaison possible d attribut ( pour algorithme de  vote )
+     * @param chemin_fichier  le chemin du fichier csv
+     */
     public CSVPointBuilder(String chemin_fichier,boolean charge) throws IOException {
         System.out.println("begin");
         this.FILE_PATH = chemin_fichier;
@@ -74,7 +94,7 @@ public class CSVPointBuilder {
                         return clusterData.getColumnName().equals(entry.getKey());
                     };
                     clusteringDataColumn.stream().filter(prdct).forEach(clusterData ->{
-                        clusterData.getColumnPoints().add((int)index-1, new Line(Float.parseFloat(entry.getValue()), (int)index));
+                        clusterData.getColumnPoints().add((int)index-1, new ColumnMembreValue(Float.parseFloat(entry.getValue()), (int)index));
                     });
                     
                 }
